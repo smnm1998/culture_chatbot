@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- static 태그를 로드 -->
+    {% load static %}
+    
+    <!-- 정적 파일 경로에서 CSS 참조 -->
+    <link rel="stylesheet" href="{% static 'css/assistant/local.css' %}">
+    
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+</head>
+<body>
+    <div class="main-container">
+        <header class="menu-bar">
+            <button id="menuButton"><img src="{% static 'image/assistant/menu.svg' %}" alt="Menu" class="size-12"></button>
+            <button id="userButton"><img src="{% static 'image/assistant/user-circle.svg' %}" alt="User" class="size-12"></button>
+        </header>
+
+        <!-- 검색창 -->
+        <div class="search-bar">
+            <div class="search-container">
+                <input type="text" placeholder="대화하고 싶은 서비스를 검색해보세요" id="searchInput">
+                <button id="searchButton"><img src="{% static 'image/assistant/search.svg' %}" alt="Search"></button>
+            </div>
+        </div>
+
+        <!-- 카테고리 리스트 -->
+        <div>
+            <ul class="category-list">
+                <li><a href="{% url 'main' %}">추천</a></li>
+                <li><a href="{% url 'local-select' %}" class="category-select">지역별</a></li>
+            </ul>
+        </div>
+
+        <!-- 첫 번째 태그 버튼 Swiper -->
+        <div class="swiper-container tag-swiper-1">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"><button class="tag-button selected" data-province="서울">서울</button></div>
+                <div class="swiper-slide"><button class="tag-button" data-province="경기도">경기도</button></div>
+                <div class="swiper-slide"><button class="tag-button" data-province="경상북도">경상북도</button></div>
+                <div class="swiper-slide"><button class="tag-button" data-province="경상남도">경상남도</button></div>
+                <div class="swiper-slide"><button class="tag-button" data-province="전라북도">전라북도</button></div>
+                <div class="swiper-slide"><button class="tag-button" data-province="전라남도">전라남도</button></div>
+                <div class="swiper-slide"><button class="tag-button" data-province="충청북도">충청북도</button></div>
+                <div class="swiper-slide"><button class="tag-button" data-province="충청남도">충청남도</button></div>
+            </div>
+        </div>
+
+        <!-- 두 번째 태그 버튼 Swiper (시/군/읍 목록) -->
+        <div class="swiper-container tag-swiper-2" style="display: none;">
+            <div class="swiper-wrapper" id="cityList"></div>
+        </div>
+
+        <!-- 이미지 2행 4열로 출력 -->
+        <div class="photo-grid">
+            <!-- 어시스턴트 이미지가 여기에 동적으로 로드됨 -->
+        </div>
+
+        <footer></footer>
+    </div>
+
+    <!-- Swiper JS -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Swiper 초기화 및 jQuery로 다중 선택 기능 -->
+    <script>
+    // 첫 번째 Swiper 초기화
+    var swiper1 = new Swiper('.tag-swiper-1', {
+        slidesPerView: 3.8, // 한 화면에 4개의 태그가 보이도록 설정
+        spaceBetween: 15, // 슬라이드 간의 간격을 15px로 설정
+        freeMode: true, // 자유롭게 스크롤 가능하도록 설정
+        scrollbar: {
+            el: '.swiper-scrollbar',
+            draggable: true,
+        },
+    });
+
+    // 두 번째 Swiper 초기화
+    var swiper2 = new Swiper('.tag-swiper-2', {
+        slidesPerView: 4.2,
+        spaceBetween: 15,
+        freeMode: true,
+        scrollbar: {
+            el: '.swiper-scrollbar',
+            draggable: true,
+        },
+    });
+
+    // 도별 시/군/읍 목록을 수동으로 정의
+    var cityData = {
+        '서울': ['종로구', '강남구', '송파구'],
+        '경기도': ['수원시', '성남시', '용인시'],
+        '경상북도': ['안동시', '경주시', '포항시'],
+        '경상남도': ['창원시', '김해시', '진주시'],
+        '전라북도': ['전주시', '군산시', '익산시'],
+        '전라남도': ['여수시', '순천시', '목포시'],
+        '충청북도': ['청주시', '충주시', '제천시'],
+        '충청남도': ['천안시', '아산시', '서산시'],
+    };
+
+    // 첫 번째 Swiper의 버튼 클릭 이벤트 처리
+    $('.tag-swiper-1 .tag-button').on('click', function() {
+        // 모든 버튼에서 selected 클래스 제거
+        $('.tag-swiper-1 .tag-button').removeClass('selected');
+        // 클릭된 버튼에 selected 클래스 추가
+        $(this).addClass('selected');
+
+        // 선택된 도에 따라 시/군/읍 목록 로드
+        var selectedProvince = $(this).data('province');
+        $('#cityList').empty(); // 시/군/읍 리스트 초기화
+        $('.tag-swiper-2').hide(); // 기본적으로 숨기기
+        $('#assistantList').empty(); // 어시스턴트 목록 초기화
+
+        // 시/군/읍 목록 수동으로 설정
+        if (selectedProvince && cityData[selectedProvince]) {
+            cityData[selectedProvince].forEach(function(city) {
+                $('#cityList').append(`<div class="swiper-slide"><button class="tag-button" data-city="${city}">${city}</button></div>`);
+            });
+            $('.tag-swiper-2').show(); // 시/군/읍 Swiper 보이기
+            swiper2.update(); // Swiper 업데이트
+        }
+    });
+
+    // 두 번째 Swiper의 시/군/읍 클릭 이벤트 처리
+    $('#cityList').on('click', '.tag-button', function() {
+        // 모든 시/군/읍 버튼에서 selected 클래스 제거
+        $('.tag-swiper-2 .tag-button').removeClass('selected');
+        // 클릭된 시/군/읍 버튼에 selected 클래스 추가
+        $(this).addClass('selected');
+
+        // 시/군/읍 선택
+        var selectedCity = $(this).data('city');
+        var selectedProvince = $('.tag-swiper-1 .tag-button.selected').data('province');
+        $('#assistantList').empty(); // 어시스턴트 목록 초기화
+
+        // 선택된 도와 시에 맞는 어시스턴트 데이터 불러오기
+        if (selectedProvince && selectedCity) {
+            $.ajax({
+                url: '/api/assistants/',
+                method: 'GET',
+                data: {
+                    province: selectedProvince,
+                    city_county_town: selectedCity
+                },
+                success: function(response) {
+                    if (response.length === 0) {
+                        $('#assistantList').append('<p>해당 지역에 어시스턴트가 없습니다.</p>');
+                    } else {
+                        response.forEach(function(assistant) {
+                            $('#assistantList').append(`
+                                <div class="photo-item">
+                                    <img src="${assistant.photo}" alt="${assistant.title}">
+                                    <p class="photo-title">${assistant.title}</p>
+                                    <p class="photo-address">${assistant.city_county_town.name}, ${assistant.city_county_town.province.name}</p>
+                                </div>
+                            `);
+                        });
+                    }
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

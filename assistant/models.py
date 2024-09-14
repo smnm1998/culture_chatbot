@@ -15,9 +15,10 @@ class CityCountyTown(models.Model):
 
 class Assistant(models.Model):
     name = models.CharField(max_length=255)  # 어시스턴트 이름
-    photo = models.ImageField(upload_to='assistant_photos/')  # 어시스턴트 관련 이미지
+    # photo = models.ImageField(upload_to='assistant_photos/')  # 어시스턴트 관련 이미지
+    photo = models.FileField(upload_to='assistant_photos/', blank=True, null=True)  # FileField로 변경
     description = models.TextField(default='No description available')  # 어시스턴트 설명
-    country = models.CharField(max_length=100, default='한국')  # 나라
+    country = models.CharField(max_length=100, default='대한민국')  # 나라
     province = models.ForeignKey(Province, on_delete=models.CASCADE, default=1)  # 기본값으로 ID 1인 Province 사용
     city_county_town = models.ForeignKey(CityCountyTown, on_delete=models.CASCADE)  # 시군읍 정보
     assistant_variable = models.CharField(max_length=255, default='default_assistant')  # 어시스턴트 연결 변수

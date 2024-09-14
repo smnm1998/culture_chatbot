@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Local</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <!-- static 태그를 로드 -->
     {% load static %}
-    
+
     <!-- 정적 파일 경로에서 CSS 참조 -->
     <link rel="stylesheet" href="{% static 'css/assistant/local.css' %}">
-    
+
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
 </head>
@@ -35,6 +35,8 @@
             <ul class="category-list">
                 <li><a href="{% url 'main' %}">추천</a></li>
                 <li><a href="{% url 'local-select' %}" class="category-select">지역별</a></li>
+                <li><a href="{% static 'views/main/theme.html' %}">테마별</a></li>
+                <li><a href="{% static 'views/main/warrior.html' %}">독립운동</a></li>
             </ul>
         </div>
 
@@ -58,7 +60,7 @@
         </div>
 
         <!-- 이미지 2행 4열로 출력 -->
-        <div class="photo-grid">
+        <div class="photo-grid" id="assistantList">
             <!-- 어시스턴트 이미지가 여기에 동적으로 로드됨 -->
         </div>
 
@@ -94,14 +96,14 @@
 
     // 도별 시/군/읍 목록을 수동으로 정의
     var cityData = {
-        '서울': ['종로구', '강남구', '송파구'],
-        '경기도': ['수원시', '성남시', '용인시'],
-        '경상북도': ['안동시', '경주시', '포항시'],
-        '경상남도': ['창원시', '김해시', '진주시'],
-        '전라북도': ['전주시', '군산시', '익산시'],
-        '전라남도': ['여수시', '순천시', '목포시'],
-        '충청북도': ['청주시', '충주시', '제천시'],
-        '충청남도': ['천안시', '아산시', '서산시'],
+        '서울': ['종로구', '강남구', '송파구', '서초구', '마포구', '광진구'],
+        '경기도': ['수원시', '성남시', '용인시', '부천시', '고양시', '안산시'],
+        '경상북도': ['안동시', '경주시', '포항시', '구미시', '문경시', '상주시'],
+        '경상남도': ['창원시', '김해시', '진주시', '양산시', '통영시', '거제시'],
+        '전라북도': ['전주시', '군산시', '익산시', '남원시', '김제시', '완주군'],
+        '전라남도': ['여수시', '순천시', '목포시', '광양시', '나주시', '해남군'],
+        '충청북도': ['청주시', '충주시', '제천시', '옥천군', '단양군', '음성군'],
+        '충청남도': ['천안시', '아산시', '서산시', '보령시', '공주시', '논산시'],
     };
 
     // 첫 번째 Swiper의 버튼 클릭 이벤트 처리
@@ -127,7 +129,7 @@
         }
     });
 
-    // 두 번째 Swiper의 시/군/읍 클릭 이벤트 처리
+    // 선택된 도와 시에 맞는 어시스턴트 데이터 불러오기
     $('#cityList').on('click', '.tag-button', function() {
         // 모든 시/군/읍 버튼에서 selected 클래스 제거
         $('.tag-swiper-2 .tag-button').removeClass('selected');
@@ -142,30 +144,44 @@
         // 선택된 도와 시에 맞는 어시스턴트 데이터 불러오기
         if (selectedProvince && selectedCity) {
             $.ajax({
-                url: '/api/assistants/',
+                url: '/api/assistants/',  // 어시스턴트 정보를 제공하는 API 엔드포인트
                 method: 'GET',
                 data: {
                     province: selectedProvince,
                     city_county_town: selectedCity
                 },
+                
                 success: function(response) {
                     if (response.length === 0) {
                         $('#assistantList').append('<p>해당 지역에 어시스턴트가 없습니다.</p>');
                     } else {
                         response.forEach(function(assistant) {
+                            console.log(assistant);  // 확인을 위해 추가
+                
+                            // 도시, 도 정보가 존재하는지 확인 후 추가
+                            const city_name = assistant.city_county_town ? assistant.city_county_town.name : '정보 없음';
+                            const province_name = assistant.province ? assistant.province.name : '정보 없음';
+                
+                            // 중복되는 텍스트 출력 방지하고, 어시스턴트 정보만 출력
                             $('#assistantList').append(`
                                 <div class="photo-item">
-                                    <img src="${assistant.photo}" alt="${assistant.title}">
-                                    <p class="photo-title">${assistant.title}</p>
-                                    <p class="photo-address">${assistant.city_county_town.name}, ${assistant.city_county_town.province.name}</p>
+                                    <a href="/chatbot/${assistant.id}/">
+                                        <img src="${assistant.photo}" alt="${assistant.name}">
+                                        <p class="photo-title">${assistant.name}</p>
+                                        <p class="photo-address">${assistant.country}, ${province_name}, ${city_name}</p>
+                                    </a>
                                 </div>
                             `);
                         });
                     }
+                },
+
+                error: function(error) {
+                    console.error('Error fetching assistants:', error);
                 }
             });
         }
     });
-</script>
+    </script>
 </body>
 </html>

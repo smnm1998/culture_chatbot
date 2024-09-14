@@ -7,10 +7,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-    
+
     <!-- static 태그를 로드 -->
     {% load static %}
-    
+
     <!-- 정적 파일 경로에서 main.css 참조 -->
     <link rel="stylesheet" href="{% static 'css/assistant/main.css' %}">
 </head>
@@ -33,7 +33,7 @@
         <!-- 카테고리 -->
         <div>
             <ul class="category-list">
-                <li><a href="main.html" class="category-select">추천</a></li>
+                <li><a href="{% url 'main' %}" class="category-select">추천</a></li>
                 <li><a href="{% url 'local-select' %}">지역별</a></li>
                 <li><a href="{% static 'views/main/theme.html' %}">테마별</a></li>
                 <li><a href="{% static 'views/main/warrior.html' %}">독립운동</a></li>

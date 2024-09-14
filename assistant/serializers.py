@@ -13,7 +13,11 @@ class ProvinceSerializer(serializers.ModelSerializer):
         model = Province
         fields = ['id', 'name', 'cities']
 
+# 어시스턴트 직렬화
 class AssistantSerializer(serializers.ModelSerializer):
+    city_county_town = CityCountyTownSerializer()  # 시군읍 정보 포함
+    province = ProvinceSerializer()  # 도 정보 포함
+
     class Meta:
         model = Assistant
-        fields = ['id', 'name', 'photo']
+        fields = ['id', 'name', 'photo', 'description', 'country', 'province', 'city_county_town', 'assistant_variable']

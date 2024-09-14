@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko-KR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ assistant.name }} Chat</title>
+    <link rel="stylesheet" href="//fonts.googleapis.com/earlyaccess/nanummyeongjo.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/assistant/chatbot.css' %}">
+</head>
+<body>
+    <div class="page-container">
+        <header class="menu-bar">
+            <button id="menuButton"><img src="{% static 'image/assistant/menu.svg' %}" alt="Menu" class="size-12"></button>
+            <button id="userButton"><img src="{% static 'image/assistant/user-circle.svg' %}" alt="User" class="size-12"></button>
+        </header>
+
+        <div class="chat-container" id="chatContainer">
+            <div id="messageList" class="message-list">
+                <div class="message-container ai-message">
+                    <div class="message-content">
+                        <p>{{ assistant.name }} 어시스턴트입니다! 무엇을 도와드릴까요?</p>
+                    </div>
+                    <hr class="msg-hr">
+                    <div class="message-actions">
+                        <button class="action-button"><img src="{% static 'image/assistant/like.svg' %}" alt="좋아요"></button>
+                        <button class="action-button"><img src="{% static 'image/assistant/unlike.svg' %}" alt="싫어요"></button>
+                        <button class="action-button action-button-cp" onclick="handleCopy('{{ assistant.name }} 어시스턴트입니다!')">
+                            <img src="{% static 'image/assistant/copy.svg' %}" alt="복사">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input id="messageInput" type="text" placeholder="무엇이든 물어보세요...">
+                <button id="sendButton" class="send-button">
+                    <img src="{% static 'image/assistant/message-send.svg' %}" alt="Send">
+                </button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    $(document).ready(function () {
+        const apiBaseUrl = '/api/chatbot/{{ assistant.id }}/';
+
+        $('#sendButton').on('click', function () {
+            const message = $('#messageInput').val().trim();
+            if (message) {
+                appendMessage(message, 'user');
+                $('#messageInput').val('');
+                sendMessageToBot(message);
+            }
+        });
+
+        function appendMessage(text, sender) {
+            const messageContainer = $('<div class="message-container"></div>');
+            const messageContent = $('<div class="message-content"></div>');
+            const messageText = $('<p></p>').text(text);
+            messageContent.append(messageText);
+            messageContainer.append(messageContent);
+
+            if (sender === 'ai') {
+                messageContainer.addClass('ai-message');
+                appendActions(messageContainer, text); // Add actions for AI responses
+            } else {
+                messageContainer.addClass('user-message');
+            }
+
+            $('#messageList').append(messageContainer);
+            scrollToBottom(); // Scroll to the bottom after message is added
+        }
+
+        function typeText(element, text, index = 0) {
+            if (index < text.length) {
+                element.text(element.text() + text.charAt(index));  // Add one character at a time
+                setTimeout(function () {
+                    typeText(element, text, index + 1);
+                }, 50);  // Delay for typing effect
+            }
+        }
+
+        function scrollToBottom() {
+            const chatContainer = $('#chatContainer');
+            chatContainer.scrollTop(chatContainer[0].scrollHeight);
+        }
+
+        function sendMessageToBot(message) {
+            const eventSource = new EventSource(`${apiBaseUrl}?question=${encodeURIComponent(message)}`);
+            let fullResponse = '';
+            let aiMessageContainer = $('<div class="message-container ai-message"><div class="message-content"><p></p></div></div>');
+            $('#messageList').append(aiMessageContainer);
+            let messageContent = aiMessageContainer.find('p');
+        
+            eventSource.onmessage = function (event) {
+                const text = event.data;
+                if (text) {
+                    fullResponse += text;
+                    typeText(messageContent, text);  // Show response with typing effect
+                }
+            };
+        
+            eventSource.onerror = function () {
+                eventSource.close();
+                if (!fullResponse) {
+                    appendMessage('챗봇 답변을 가져오는 중 오류가 발생했습니다.', 'ai');
+                }
+            };
+        
+            eventSource.onclose = function () {
+                // Call appendActions when the response is finished
+                appendActions(aiMessageContainer, fullResponse);
+            };
+        }
+
+        function appendActions(container, text) {
+            const hr = $('<hr class="msg-hr">');
+            const actions = $(`
+                <div class="message-actions">
+                    <button class="action-button"><img src="{% static 'image/assistant/like.svg' %}" alt="좋아요"></button>
+                    <button class="action-button"><img src="{% static 'image/assistant/unlike.svg' %}" alt="싫어요"></button>
+                    <button class="action-button action-button-cp" onclick="handleCopy('${text}')"><img src="{% static 'image/assistant/copy.svg' %}" alt="복사"></button>
+                </div>
+            `);
+            container.append(hr).append(actions);
+        }
+
+        window.handleCopy = function (text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('메시지가 복사되었습니다.');
+            }).catch(err => {
+                console.error('복사 오류:', err);
+            });
+        };
+    });
+</script>
+</body>
+</html>

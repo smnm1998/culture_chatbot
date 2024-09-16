@@ -11,8 +11,19 @@ import os
 
 
 # 첫 번째 페이지: 추천 페이지
+# def main_view(request):
+#     return render(request, 'main.html')  # main.html 템플릿 렌더링
+
 def main_view(request):
-    return render(request, 'main.html')  # main.html 템플릿 렌더링
+    descriptions = ["라운지(여행공간)과 함께하는 안동 여행", "로컬 음식에 담긴 이야기"]
+    assistants_by_description = {}
+
+    # 각 description에 맞는 어시스턴트 데이터를 가져옴
+    for description in descriptions:
+        assistants_by_description[description] = Assistant.objects.filter(description=description)
+
+    return render(request, 'main.html', {'assistants_by_description': assistants_by_description})
+
 
 # 두 번째 페이지: 지역 선택 페이지
 def local_view(request):
@@ -91,3 +102,23 @@ def gpt_response_stream(request, id):
             yield 'data: No question provided\n\n'
 
     return StreamingHttpResponse(stream(), content_type='text/event-stream')
+
+# 세 번째 페이지: 지역 선택 페이지
+def thema_view(request):
+    return render(request, 'thema.html')
+
+# 세 번째 페이지: 지역 선택 페이지
+def independence_view(request):
+    descriptions = ["문학으로 아픔을 풀어낸 독립운동가"]
+    assistants_by_description = {}
+
+    # 각 description에 맞는 어시스턴트 데이터를 가져옴
+    for description in descriptions:
+        assistants_by_description[description] = Assistant.objects.filter(description=description)
+
+    return render(request, 'independence.html', {'assistants_by_description': assistants_by_description})
+
+def search_results_view(request):
+    query = request.GET.get('query')
+    results = Assistant.objects.filter(name__icontains=query)  # 이름 기준으로 검색
+    return render(request, 'search_results.html', {'query': query, 'results': results})

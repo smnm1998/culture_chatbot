@@ -45,8 +45,8 @@ body {
 
 .search-bar input {
     font-family: 'Nanum Myeongjo', Serif;
-    width: 100%;
-    padding: 18px 45px 18px 15px; /* 오른쪽 여백을 충분히 줌 */
+    width: 90%;
+    padding: 18px 15px;
     border-radius: 15px;
     border: 1px solid #f1f1f1;
     outline: none;
@@ -61,12 +61,15 @@ body {
 #searchButton {
     position: absolute;
     top: 50%;
-    right: 16px; /* 버튼을 input 내부로 넣기 */
+    right: 16px; /* 오른쪽 여백 조정 */
     transform: translateY(-50%);
-    background-color: transparent;
+    background-color: #fff;
     border: none;
     cursor: pointer;
     z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #searchButton img {
@@ -155,9 +158,4 @@ body {
 .swiper-scrollbar-2,
 .swiper-scrollbar-3 {
     display: none; /* 스크롤바 숨기기 */
-}
-
-.chatbot-link {
-    text-decoration: none; /* 링크의 밑줄 제거 */
-    color: inherit; /* 링크의 색상 제거 */
 }

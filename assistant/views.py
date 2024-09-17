@@ -105,7 +105,7 @@ def gpt_response_stream(request, id):
 
 # 세 번째 페이지: 지역 선택 페이지
 def thema_view(request):
-    return render(request, 'thema.html')
+    return render(request, 'theme.html')
 
 # 세 번째 페이지: 지역 선택 페이지
 def independence_view(request):

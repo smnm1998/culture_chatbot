@@ -36,6 +36,7 @@ body {
     justify-content: center;
     align-items: center;
     padding: 10px;
+    padding-left: 18px;
 }
 
 .search-container {
@@ -147,7 +148,7 @@ body {
 }
 
 .swiper-slide img,
-.swiper-slide-2 img
+.swiper-slide-2 img,
 .swiper-slide-3 img {
     width: 100%; /* 이미지 크기 조절 */
     height: auto;
@@ -158,4 +159,9 @@ body {
 .swiper-scrollbar-2,
 .swiper-scrollbar-3 {
     display: none; /* 스크롤바 숨기기 */
+}
+
+.chatbot-link {
+    text-decoration: none; /* 링크의 밑줄 제거 */
+    color: inherit; /* 링크의 색상 제거 */
 }

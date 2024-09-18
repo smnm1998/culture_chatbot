@@ -12,7 +12,8 @@
 <body>
     <div class="page-container">
         <header class="menu-bar">
-            <button id="menuButton"><img src="{% static 'image/assistant/menu.svg' %}" alt="Menu" class="size-12"></button>
+            <!-- menuButton의 id는 유일해야 하므로 변경 -->
+            <button id="mainMenuButton"><img src="{% static 'image/assistant/menu.svg' %}" alt="Menu" class="size-12"></button>
             <button id="userButton"><img src="{% static 'image/assistant/user-circle.svg' %}" alt="User" class="size-12"></button>
         </header>
 
@@ -24,9 +25,10 @@
                     </div>
                     <hr class="msg-hr">
                     <div class="message-actions">
-                        <button class="action-button"><img src="{% static 'image/assistant/like.svg' %}" alt="좋아요"></button>
-                        <button class="action-button"><img src="{% static 'image/assistant/unlike.svg' %}" alt="싫어요"></button>
-                        <button class="action-button action-button-cp" onclick="handleCopy('{{ assistant.name }} 어시스턴트입니다!')">
+                        <!-- 각 버튼의 id는 고유해야 하므로 제거하고 class로 대체 -->
+                        <button class="action-button like-btn" data-like-img="{% static 'image/assistant/like.svg' %}"><img src="{% static 'image/assistant/like.svg' %}" alt="좋아요"></button>
+                        <button class="action-button unlike-btn" data-unlike-img="{% static 'image/assistant/unlike.svg' %}"><img src="{% static 'image/assistant/unlike.svg' %}" alt="싫어요"></button>
+                                                <button class="action-button action-button-cp copy-btn" onclick="handleCopy(this)">
                             <img src="{% static 'image/assistant/copy.svg' %}" alt="복사">
                         </button>
                     </div>
@@ -48,95 +50,148 @@
     $(document).ready(function () {
         const apiBaseUrl = '/api/chatbot/{{ assistant.id }}/';
 
+        // 메시지 전송 버튼 클릭 이벤트
         $('#sendButton').on('click', function () {
             const message = $('#messageInput').val().trim();
             if (message) {
+                console.log("User sent a message:", message); // 디버깅 로그
                 appendMessage(message, 'user');
-                $('#messageInput').val('');
-                sendMessageToBot(message);
+                $('#messageInput').val('');  // 메시지 입력 필드 비우기
+                sendMessageToBot(message);   // 봇에게 메시지 보내기
             }
         });
 
+        // 메시지를 화면에 추가하는 함수
         function appendMessage(text, sender) {
-            const messageContainer = $('<div class="message-container"></div>');
-            const messageContent = $('<div class="message-content"></div>');
-            const messageText = $('<p></p>').text(text);
+            const messageContainer = $('<div>', { class: 'message-container' });
+            const messageContent = $('<div>', { class: 'message-content' });
+            const messageText = $('<p>').text(text);
+
             messageContent.append(messageText);
             messageContainer.append(messageContent);
 
+            // AI 메시지의 경우 action 버튼 추가
             if (sender === 'ai') {
+                console.log("AI message detected, adding action buttons..."); // 디버깅 로그
                 messageContainer.addClass('ai-message');
-                appendActions(messageContainer, text); // Add actions for AI responses
+                appendActions(messageContainer, text);
             } else {
                 messageContainer.addClass('user-message');
             }
 
             $('#messageList').append(messageContainer);
-            scrollToBottom(); // Scroll to the bottom after message is added
+            scrollToBottom();  // 메시지가 추가되면 화면을 맨 아래로 스크롤
         }
 
+        // 텍스트를 한 글자씩 출력하는 타이핑 효과 함수
         function typeText(element, text, index = 0) {
             if (index < text.length) {
-                element.text(element.text() + text.charAt(index));  // Add one character at a time
+                element.text(element.text() + text.charAt(index));  // 한 글자씩 추가
                 setTimeout(function () {
                     typeText(element, text, index + 1);
-                }, 50);  // Delay for typing effect
+                }, 50);  // 타이핑 효과를 위한 딜레이
             }
         }
 
+        // 스크롤을 맨 아래로 이동시키는 함수
         function scrollToBottom() {
             const chatContainer = $('#chatContainer');
             chatContainer.scrollTop(chatContainer[0].scrollHeight);
         }
 
+        // 봇에게 메시지를 전송하는 함수
         function sendMessageToBot(message) {
+            console.log("Sending message to bot:", message); // 디버깅 로그
             const eventSource = new EventSource(`${apiBaseUrl}?question=${encodeURIComponent(message)}`);
             let fullResponse = '';
-            let aiMessageContainer = $('<div class="message-container ai-message"><div class="message-content"><p></p></div></div>');
+            const aiMessageContainer = $('<div>', { class: 'message-container ai-message' }).append(
+                $('<div>', { class: 'message-content' }).append($('<p>'))
+            );
             $('#messageList').append(aiMessageContainer);
-            let messageContent = aiMessageContainer.find('p');
-        
+            const messageContent = aiMessageContainer.find('p');
+
+            // 봇의 응답을 타이핑 효과로 보여줌
             eventSource.onmessage = function (event) {
                 const text = event.data;
                 if (text) {
+                    console.log("Received message from bot:", text); // 디버깅 로그
                     fullResponse += text;
-                    typeText(messageContent, text);  // Show response with typing effect
+                    typeText(messageContent, text);  // 타이핑 효과로 메시지 추가
                 }
             };
-        
+
+            // 에러 발생 시 메시지 처리 및 받은 메시지 처리
             eventSource.onerror = function () {
+                console.error("Error fetching chatbot response. Handling partial response if available."); // 에러 로그
                 eventSource.close();
-                if (!fullResponse) {
+
+                // 이미 받은 메시지가 있으면 이를 처리
+                if (fullResponse) {
+                    console.log("Handling partial response after error:", fullResponse); // 디버깅 로그
+                    appendActions(aiMessageContainer, fullResponse);
+                } else {
                     appendMessage('챗봇 답변을 가져오는 중 오류가 발생했습니다.', 'ai');
                 }
             };
-        
+
+            // 응답 완료 시 action 버튼 추가
             eventSource.onclose = function () {
-                // Call appendActions when the response is finished
+                console.log("Bot response completed. Adding actions..."); // 디버깅 로그
                 appendActions(aiMessageContainer, fullResponse);
             };
         }
 
+        // AI 메시지에 action 버튼과 구분선을 추가하는 함수
         function appendActions(container, text) {
-            const hr = $('<hr class="msg-hr">');
-            const actions = $(`
-                <div class="message-actions">
-                    <button class="action-button"><img src="{% static 'image/assistant/like.svg' %}" alt="좋아요"></button>
-                    <button class="action-button"><img src="{% static 'image/assistant/unlike.svg' %}" alt="싫어요"></button>
-                    <button class="action-button action-button-cp" onclick="handleCopy('${text}')"><img src="{% static 'image/assistant/copy.svg' %}" alt="복사"></button>
+            console.log("Appending action buttons..."); // 디버깅 로그
+
+            // HTML에서 이미지 경로를 data-attribute로 가져옴
+            const likeImg = $('.like-btn').data('like-img');
+            const unlikeImg = $('.unlike-btn').data('unlike-img');
+            const copyImg = $('.copy-btn').data('copy-img');
+
+            // 이미지 경로가 없는 경우 에러 처리
+            console.log("Action button image paths:", { likeImg, unlikeImg, copyImg }); // 이미지 경로 확인
+            if (!likeImg || !unlikeImg || !copyImg) {
+                console.error("Action buttons cannot be loaded due to missing image paths.");
+                return;
+            }
+
+            // hr와 action buttons를 한 번에 생성하여 추가
+            const actionsContainer = $(`
+                <div>
+                    <hr class="msg-hr">
+                    <div class="message-actions">
+                        <button class="action-button"><img src="${likeImg}" alt="좋아요"></button>
+                        <button class="action-button"><img src="${unlikeImg}" alt="싫어요"></button>
+                        <button class="action-button action-button-cp" onclick="handleCopy(this)">
+                            <img src="${copyImg}" alt="복사">
+                        </button>
+                    </div>
                 </div>
             `);
-            container.append(hr).append(actions);
+
+            console.log("Appending actions container to message..."); // 디버깅 로그
+            container.append(actionsContainer);  // 컨테이너에 요소 추가
         }
 
-        window.handleCopy = function (text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('메시지가 복사되었습니다.');
-            }).catch(err => {
-                console.error('복사 오류:', err);
-            });
+        window.handleCopy = function (button) {
+            // 클릭된 버튼에서 부모 요소를 타고 올라가서 메시지의 텍스트를 가져옴
+            const messageText = $(button).closest('.message-container').find('.message-content p').text();
+        
+            if (messageText) {
+                navigator.clipboard.writeText(messageText).then(() => {
+                    console.log("Text copied to clipboard:", messageText); // 복사 성공 로그
+                    alert('메시지가 복사되었습니다.');
+                }).catch(err => {
+                    console.error('복사 오류:', err);
+                });
+            } else {
+                console.error('No text found to copy.');
+            }
         };
     });
 </script>
+
 </body>
 </html>

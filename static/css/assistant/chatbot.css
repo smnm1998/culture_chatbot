@@ -162,7 +162,6 @@ body {
     height: 100%;
 }
 
-
 .message-content {
     display: flex;
     align-items: center;
@@ -172,6 +171,34 @@ body {
     margin-left: 8px;
     width: 16px;
     height: 16px;
+}
+
+body .swiper-container {
+    width: 100%;
+    padding: 0 10px;
+    padding-right: 30px; /* 오른쪽 여백을 줘서 잘리는 문제 해결 */
+    box-sizing: border-box; /* 패딩이 박스 안쪽에 포함되도록 설정 */
+}
+
+body .swiper-wrapper {
+    display: flex;
+}
+
+body .swiper-slide {
+    margin-right: 0; /* 슬라이드 사이의 간격이 문제를 일으키지 않도록 조정 */
+}
+
+body .tag-button {
+    background-color: #F5F5F5;
+    border: 1px solid #cccccc;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    text-decoration: none; /* 밑줄 제거 */
+    white-space: nowrap; /* 텍스트 줄바꿈 없이 한 줄로 */
+    min-width: 90px; /* 버튼의 최소 너비를 설정하여 줄바꿈 방지 */
+    font-size: 14px; /* 텍스트 크기 */
+    text-align: center;
 }
 
 @media (max-width: 375px) {

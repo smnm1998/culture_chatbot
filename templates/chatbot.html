@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="//fonts.googleapis.com/earlyaccess/nanummyeongjo.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     {% load static %}
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
     <link rel="stylesheet" href="{% static 'css/assistant/chatbot.css' %}">
+
 </head>
 <body>
     <div class="page-container">
         <header class="menu-bar">
-            <!-- menuButton의 id는 유일해야 하므로 변경 -->
             <button id="mainMenuButton"><img src="{% static 'image/assistant/menu.svg' %}" alt="Menu" class="size-12"></button>
             <button id="userButton"><img src="{% static 'image/assistant/user-circle.svg' %}" alt="User" class="size-12"></button>
         </header>
@@ -25,14 +26,24 @@
                     </div>
                     <hr class="msg-hr">
                     <div class="message-actions">
-                        <!-- 각 버튼의 id는 고유해야 하므로 제거하고 class로 대체 -->
                         <button class="action-button like-btn" data-like-img="{% static 'image/assistant/like.svg' %}"><img src="{% static 'image/assistant/like.svg' %}" alt="좋아요"></button>
                         <button class="action-button unlike-btn" data-unlike-img="{% static 'image/assistant/unlike.svg' %}"><img src="{% static 'image/assistant/unlike.svg' %}" alt="싫어요"></button>
-                                                <button class="action-button action-button-cp copy-btn" onclick="handleCopy(this)">
+                        <button class="action-button action-button-cp copy-btn" data-copy-img="{% static 'image/assistant/copy.svg' %}" onclick="handleCopy(this)">
                             <img src="{% static 'image/assistant/copy.svg' %}" alt="복사">
                         </button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Swiper 슬라이더 -->
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"><button class="tag-button">유명 명소</button></div>
+                <div class="swiper-slide"><button class="tag-button">유명 인물</button></div>
+                <div class="swiper-slide"><button class="tag-button">사진 스팟</button></div>
+                <div class="swiper-slide"><button class="tag-button">근처 카페</button></div>
+                <div class="swiper-slide"><button class="tag-button">지역 특산품</button></div>
             </div>
         </div>
 
@@ -46,15 +57,30 @@
         </div>
     </div>
 
+<!-- Swiper JS -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 <script>
     $(document).ready(function () {
         const apiBaseUrl = '/api/chatbot/{{ assistant.id }}/';
+
+        // Swiper 초기화
+        var swiper = new Swiper('.swiper-container', {
+            slidesPerView: 4, // 한 화면에 4개의 태그가 보이도록 설정
+            spaceBetween: 15, // 슬라이드 간의 간격을 15px로 설정
+            freeMode: true, // 자유롭게 스크롤 가능하도록 설정
+        });
+
+        // 태그 버튼 클릭 시 바로 어시스턴트에 전송
+        $('.tag-button').on('click', function () {
+            const tagText = $(this).text().trim();
+            appendMessage(tagText, 'user'); // 사용자 메시지 추가
+            sendMessageToBot(tagText); // 봇에게 메시지 전송
+        });
 
         // 메시지 전송 버튼 클릭 이벤트
         $('#sendButton').on('click', function () {
             const message = $('#messageInput').val().trim();
             if (message) {
-                console.log("User sent a message:", message); // 디버깅 로그
                 appendMessage(message, 'user');
                 $('#messageInput').val('');  // 메시지 입력 필드 비우기
                 sendMessageToBot(message);   // 봇에게 메시지 보내기
@@ -101,7 +127,6 @@
 
         // 봇에게 메시지를 전송하는 함수
         function sendMessageToBot(message) {
-            console.log("Sending message to bot:", message); // 디버깅 로그
             const eventSource = new EventSource(`${apiBaseUrl}?question=${encodeURIComponent(message)}`);
             let fullResponse = '';
             const aiMessageContainer = $('<div>', { class: 'message-container ai-message' }).append(
@@ -110,33 +135,24 @@
             $('#messageList').append(aiMessageContainer);
             const messageContent = aiMessageContainer.find('p');
 
-            // 봇의 응답을 타이핑 효과로 보여줌
             eventSource.onmessage = function (event) {
                 const text = event.data;
                 if (text) {
-                    console.log("Received message from bot:", text); // 디버깅 로그
                     fullResponse += text;
                     typeText(messageContent, text);  // 타이핑 효과로 메시지 추가
                 }
             };
 
-            // 에러 발생 시 메시지 처리 및 받은 메시지 처리
             eventSource.onerror = function () {
-                console.error("Error fetching chatbot response. Handling partial response if available."); // 에러 로그
                 eventSource.close();
-
-                // 이미 받은 메시지가 있으면 이를 처리
                 if (fullResponse) {
-                    console.log("Handling partial response after error:", fullResponse); // 디버깅 로그
                     appendActions(aiMessageContainer, fullResponse);
                 } else {
                     appendMessage('챗봇 답변을 가져오는 중 오류가 발생했습니다.', 'ai');
                 }
             };
 
-            // 응답 완료 시 action 버튼 추가
             eventSource.onclose = function () {
-                console.log("Bot response completed. Adding actions..."); // 디버깅 로그
                 appendActions(aiMessageContainer, fullResponse);
             };
         }
@@ -178,11 +194,10 @@
         window.handleCopy = function (button) {
             // 클릭된 버튼에서 부모 요소를 타고 올라가서 메시지의 텍스트를 가져옴
             const messageText = $(button).closest('.message-container').find('.message-content p').text();
-        
+
             if (messageText) {
                 navigator.clipboard.writeText(messageText).then(() => {
                     console.log("Text copied to clipboard:", messageText); // 복사 성공 로그
-                    alert('메시지가 복사되었습니다.');
                 }).catch(err => {
                     console.error('복사 오류:', err);
                 });
@@ -192,6 +207,7 @@
         };
     });
 </script>
+
 
 </body>
 </html>

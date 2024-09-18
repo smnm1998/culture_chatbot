@@ -26,6 +26,6 @@ urlpatterns = [
 
     path('', include('assistant.urls')),  # assistant 앱의 URL 포함
 
-    path('api/', include('assistant.urls')),  # assistant 앱의 URL 포함
+    # path('api/', include('assistant.urls')),  # assistant 앱의 URL 포함
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

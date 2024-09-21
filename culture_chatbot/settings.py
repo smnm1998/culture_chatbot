@@ -14,7 +14,8 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import logging
-import logging
+from decouple import config
+
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -114,11 +115,11 @@ WSGI_APPLICATION = 'culture_chatbot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'culture_chatbot',   # 데이터베이스 이름
-        'USER': 'root',              # MySQL 사용자
-        'PASSWORD': '1234',  # MySQL 비밀번호
-        'HOST': 'localhost',         # 호스트
-        'PORT': '3307',              # 포트
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
 

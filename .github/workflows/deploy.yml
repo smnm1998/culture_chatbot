@@ -12,11 +12,11 @@ jobs:
     steps:
       # 1. 리포지토리에서 최신 코드 체크아웃
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3  # Node 버전에 맞춰 최신 버전 사용
 
       # 2. Python 환경 설정
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4  # Node 버전에 맞춰 최신 버전 사용
         with:
           python-version: '3.8'
 

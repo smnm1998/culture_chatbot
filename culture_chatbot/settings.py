@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'assistant',
     'rest_framework',
 ]
@@ -85,6 +86,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'culture_chatbot.urls'
@@ -104,6 +106,12 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://your-domain.com",  # 허용할 도메인
+    "http://localhost:8000",    # 로컬 개발 중일 때 허용
+    "http://158.247.200.5",     # 서버의 IP 주소 (예시)
 ]
 
 WSGI_APPLICATION = 'culture_chatbot.wsgi.application'
@@ -152,6 +160,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
 
 # Static files (CSS, JavaScript, Images)

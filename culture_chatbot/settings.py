@@ -162,6 +162,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # static 디렉터리 설정
 ]
 
+# 정적파일을 한곳에 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
 # 미디어 파일 설정
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

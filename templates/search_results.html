@@ -10,7 +10,7 @@
     {% load static %}
 
     <!-- 정적 파일 경로에서 CSS 참조 -->
-    <link rel="stylesheet" href="{% static 'css/assistant/thema.css' %}">
+    <link rel="stylesheet" href="{% static 'css/assistant/search_results.css' %}">
 </head>
 <body>
     <div class="main-container">
@@ -41,7 +41,7 @@
     </div>    
     
     <div class="main-container">
-        <h1>검색 결과: "{{ query }}"</h1>
+        <h2>검색 결과: "{{ query }}"</h2>
         <div class="photo-grid" id="assistantList">
             {% if results %}
                 {% for assistant in results %}
@@ -58,9 +58,6 @@
             {% endif %}
         </div>
     </div>
-
-
-        <footer></footer>
 </body>
 </html>
 

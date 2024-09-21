@@ -147,7 +147,7 @@ body {
 
 .photo-item img {
     width: 100%; /* 이미지의 너비를 100%로 설정 */
-    height: 60%; /* 높이를 0으로 설정 */
+    height: 195px; /* 높이를 60%로 설정 */
     object-fit: cover; /* 이미지가 컨테이너를 꽉 채우도록 함 */
     border-radius: 10px;
 }

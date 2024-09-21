@@ -116,12 +116,11 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'culture_chatbot',   # 데이터베이스 이름
         'USER': 'root',              # MySQL 사용자
-        'PASSWORD': 'jhs20191157!',  # MySQL 비밀번호
+        'PASSWORD': '1234',  # MySQL 비밀번호
         'HOST': 'localhost',         # 호스트
-        'PORT': '3306',              # 포트
+        'PORT': '3307',              # 포트
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

@@ -103,65 +103,38 @@ body {
     font-weight: bold;
 }
 
-/** 사진 항목 **/
-.tour-container-title {
-    padding: 10px 24px;
-    margin-bottom: 4px;
-    font-weight: bold;
-    font-size: 16px;
+/** 사진 그리드 **/
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2열로 설정 */
+    gap: 10px;
+    padding: 20px;
 }
 
-.tour-title {
-    font-weight: bold;
+.photo-item img {
+    width: 100%; /* 이미지의 너비를 100%로 설정 */
+    height: 195px; /* 높이를 60%로 설정 */
+    object-fit: cover; /* 이미지가 컨테이너를 꽉 채우도록 함 */
+    border-radius: 10px;
 }
 
-.tour-address {
+.photo-item a {
+    text-decoration: none; /* 링크의 밑줄 제거 */
+    color: inherit; /* 링크의 색상 제거 */
+}
+
+.photo-title {
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.photo-address {
     margin-top: -10px;
     font-size: 12px;
     color: #757575;
 }
 
-/* Swiper 공통 스타일 */
-.tour-container,
-.tour-container-2,
-.tour-container-3 {
-    padding: 0 14px; /* 내부 여백 설정 */
-    padding-bottom: 10px;
-    overflow: hidden; /* 내부 요소가 padding을 넘어서지 않도록 설정 */
-}
-
-.swiper-container,
-.swiper-container-2 {
-    overflow: hidden; /* 화면 밖으로 나가는 요소 숨기기 */
-}
-
-.swiper-container-3 {
-    padding-bottom: 100px;
-    overflow: hidden; /* 화면 밖으로 나가는 요소 숨기기 */
-}
-
-.swiper-slide,
-.swiper-slide-2,
-.swiper-slide-3 {
-    padding: 0 8px; /* 슬라이드 자체에 padding 적용 */
-    box-sizing: border-box; /* padding이 width에 영향을 미치지 않도록 설정 */
-}
-
-.swiper-slide img,
-.swiper-slide-2 img,
-.swiper-slide-3 img {
-    width: 100%; /* 이미지 크기 조절 */
-    height: 195px;
-    border-radius: 10px;
-}
-
-.swiper-scrollbar,
-.swiper-scrollbar-2,
-.swiper-scrollbar-3 {
-    display: none; /* 스크롤바 숨기기 */
-}
-
-.chatbot-link {
-    text-decoration: none; /* 링크의 밑줄 제거 */
-    color: inherit; /* 링크의 색상 제거 */
+.main-container h2 {
+    margin-bottom: -2px;
+    padding: 0 20px;
 }

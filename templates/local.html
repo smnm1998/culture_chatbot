@@ -34,7 +34,7 @@
             <ul class="category-list">
                 <li><a href="{% url 'main-select' %}">추천</a></li>
                 <li><a href="{% url 'local-select' %}" class="category-select">지역별</a></li>
-                <li><a href="{% url 'thema-select' %}">테마별</a></li>
+<!--                <li><a href="{% url 'thema-select' %}">테마별</a></li>-->
                 <li><a href="{% url 'independence-select' %}">독립운동</a></li>
             </ul>
         </div>
@@ -167,7 +167,7 @@
                                     <a href="/chatbot/${assistant.id}/">
                                         <img src="${assistant.photo}" alt="${assistant.name}">
                                         <p class="photo-title">${assistant.name}</p>
-                                        <p class="photo-address">${assistant.country}, ${province_name}, ${city_name}</p>
+                                        <p class="photo-address"> ${province_name}, ${city_name}, ${assistant.country}</p>
                                     </a>
                                 </div>
                             `);

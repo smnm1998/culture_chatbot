@@ -49,7 +49,7 @@
                         <a href="/chatbot/{{ assistant.id }}/">
                             <img src="{{ assistant.photo.url }}" alt="{{ assistant.name }}">
                             <p class="photo-title">{{ assistant.name }}</p>
-                            <p class="photo-address">{{ assistant.country }}, {{ assistant.province.name }}, {{ assistant.city_county_town.name }}</p>
+                            <p class="photo-address"> {{ assistant.province.name }}, {{ assistant.city_county_town.name }}, {{ assistant.country }}</p>
                         </a>
                     </div>
                 {% endfor %}

@@ -107,9 +107,9 @@ def gpt_response_stream(request, id):
 def thema_view(request):
     return render(request, 'thema.html')
 
-# 세 번째 페이지: 지역 선택 페이지
+# 세 번째 페이지: 독립 선택 페이지
 def independence_view(request):
-    descriptions = ["문학으로 아픔을 풀어낸 독립운동가"]
+    descriptions = ["문학으로 아픔을 풀어낸 독립운동가", "전장을 누볐던 무장 독립투사", "항일의 빛, 계몽의 사자"]
     assistants_by_description = {}
 
     # 각 description에 맞는 어시스턴트 데이터를 가져옴

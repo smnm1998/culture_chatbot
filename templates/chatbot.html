@@ -14,15 +14,15 @@
 <body>
     <div class="page-container">
         <header class="menu-bar">
-            <button id="mainMenuButton"><img src="{% static 'image/assistant/menu.svg' %}" alt="Menu" class="size-12"></button>
-            <button id="userButton"><img src="{% static 'image/assistant/user-circle.svg' %}" alt="User" class="size-12"></button>
+            <button id="menuButton"><a href="{% url 'main-select' %}"><img src="{% static 'image/assistant/logo.png' %}" alt="Menu" class="size-12"></a></button>
+{#            <button id="userButton"><img src="{% static 'image/assistant/user-circle.svg' %}" alt="User" class="size-12"></button>#}
         </header>
 
         <div class="chat-container" id="chatContainer">
             <div id="messageList" class="message-list">
                 <div class="message-container ai-message">
                     <div class="message-content">
-                        <p>{{ assistant.name }}입니다! 무엇을 도와드릴까요?</p>
+                        <p id="welcomeMessage"></p>
                     </div>
                     <hr class="msg-hr">
                     <div class="message-actions">
@@ -39,11 +39,6 @@
         <!-- Swiper 슬라이더 -->
         <div class="swiper-container">
             <div class="swiper-wrapper">
-                <div class="swiper-slide"><button class="tag-button">유명 명소</button></div>
-                <div class="swiper-slide"><button class="tag-button">유명 인물</button></div>
-                <div class="swiper-slide"><button class="tag-button">사진 스팟</button></div>
-                <div class="swiper-slide"><button class="tag-button">근처 카페</button></div>
-                <div class="swiper-slide"><button class="tag-button">지역 특산품</button></div>
             </div>
         </div>
 
@@ -63,17 +58,58 @@
     $(document).ready(function () {
         const apiBaseUrl = '/api/chatbot/{{ assistant.id }}/';
 
+        // 세션 스토리지에서 배열 인덱스를 가져오는 함수
+        function getArrayIndexFromSession() {
+            return sessionStorage.getItem('arrayIndex') || 1; // 기본값은 1 (첫 번째 배열)
+        }
+
+        // 세션 스토리지에서 배열 인덱스를 가져옴
+        const arrayIndex = parseInt(getArrayIndexFromSession()) - 1; // 배열은 0부터 시작
+
+        // 섹션에 따른 인사말 배열
+        const welcomeMessages = [
+            "{{ assistant.name }}입니다! 무엇을 도와드릴까요?",
+            "{{ assistant.name }}라네. 어떤 것이 궁금해 찾아 왔나?"
+        ];
+
+        // 인사말 설정
+        $('#welcomeMessage').text(welcomeMessages[arrayIndex]);
+
+        // 섹션에 맞는 태그 배열
+        const sectionTags = [
+            ['유명 명소', '사진 스팟', '지역 특산품', '지역 특산품', '지역 특산품'],
+            ['당신은 누구신가요?', '어떤 이야기를 남기셨나요?', '또다른 활동은 어떤게 있나요?', '어디서 주로 활동하셨나요?', '가장 지키고자 했던 가치는 무엇인가요?' ],
+        ];
+
         // Swiper 초기화
         var swiper = new Swiper('.swiper-container', {
-            slidesPerView: 3.5, // 한 화면에 보이는 슬라이드 수
-            spaceBetween: 15,   // 슬라이드 간의 간격
-            freeMode: true,     // 슬라이드를 자유롭게 움직일 수 있도록 설정
+            slidesPerView: 'auto',  // 한 화면에 1.7개의 슬라이드가 보이도록 설정
+            spaceBetween: 15,    // 슬라이드 간의 간격을 설정
+            freeMode: true,      // 슬라이드를 자유롭게 움직일 수 있도록 설정
             watchOverflow: true, // 슬라이드가 넘치면 스크롤 방지
         });
 
+        // Swiper의 태그 업데이트 함수
+        function updateSwiperTags(arrayIndex) {
+            const swiperWrapper = $('.swiper-wrapper');
+            swiperWrapper.empty(); // 기존 태그들 지우기
+
+            const tags = sectionTags[arrayIndex]; // 배열에서 태그 가져오기
+            tags.forEach(tag => {
+                const slide = $(`<div class="swiper-slide">
+                        <button class="tag-button">${tag}</button>
+                    </div>`);
+                swiperWrapper.append(slide);
+            });
+
+            swiper.update(); // Swiper 업데이트
+        }
+
+        // Swiper의 태그 업데이트 실행
+        updateSwiperTags(arrayIndex);
 
         // 태그 버튼 클릭 시 바로 어시스턴트에 전송
-        $('.tag-button').on('click', function () {
+        $('.swiper-wrapper').on('click', '.tag-button', function () {
             const tagText = $(this).text().trim();
             appendMessage(tagText, 'user'); // 사용자 메시지 추가
             sendMessageToBot(tagText); // 봇에게 메시지 전송
@@ -108,16 +144,6 @@
 
             $('#messageList').append(messageContainer);
             scrollToBottom();  // 메시지가 추가되면 화면을 맨 아래로 스크롤
-        }
-
-        // 텍스트를 한 글자씩 출력하는 타이핑 효과 함수
-        function typeText(element, text, index = 0) {
-            if (index < text.length) {
-                element.text(element.text() + text.charAt(index));  // 한 글자씩 추가
-                setTimeout(function () {
-                    typeText(element, text, index + 1);
-                }, 50);  // 타이핑 효과를 위한 딜레이
-            }
         }
 
         // 스크롤을 맨 아래로 이동시키는 함수
@@ -158,24 +184,23 @@
             };
         }
 
+        // 텍스트를 한 글자씩 출력하는 타이핑 효과 함수
+        function typeText(element, text, index = 0) {
+            if (index < text.length) {
+                element.text(element.text() + text.charAt(index));  // 한 글자씩 추가
+                setTimeout(function () {
+                    typeText(element, text, index + 1);
+                }, 50);  // 타이핑 효과를 위한 딜레이
+            }
+        }
+
         // AI 메시지에 action 버튼과 구분선을 추가하는 함수
         function appendActions(container, text) {
-
-            // HTML에서 이미지 경로를 data-attribute로 가져옴
             const likeImg = $('.like-btn').data('like-img');
             const unlikeImg = $('.unlike-btn').data('unlike-img');
             const copyImg = $('.copy-btn').data('copy-img');
 
-            // 이미지 경로가 없는 경우 에러 처리
-            console.log("Action button image paths:", { likeImg, unlikeImg, copyImg }); // 이미지 경로 확인
-            if (!likeImg || !unlikeImg || !copyImg) {
-                console.error("Action buttons cannot be loaded due to missing image paths.");
-                return;
-            }
-
-            // hr와 action buttons를 한 번에 생성하여 추가
-            const actionsContainer = $(`
-                <div>
+            const actionsContainer = $(`<div>
                     <hr class="msg-hr">
                     <div class="message-actions">
                         <button class="action-button"><img src="${likeImg}" alt="좋아요"></button>
@@ -184,15 +209,12 @@
                             <img src="${copyImg}" alt="복사">
                         </button>
                     </div>
-                </div>
-            `);
+                </div>`);
 
-            console.log("Appending actions container to message..."); // 디버깅 로그
             container.append(actionsContainer);  // 컨테이너에 요소 추가
         }
 
         window.handleCopy = function (button) {
-            // 클릭된 버튼에서 부모 요소를 타고 올라가서 메시지의 텍스트를 가져옴
             const messageText = $(button).closest('.message-container').find('.message-content p').text();
 
             if (messageText) {
@@ -207,7 +229,6 @@
         };
     });
 </script>
-
 
 </body>
 </html>

@@ -11,10 +11,11 @@ body {
     overflow-y: auto;
 }
 
+/** 메뉴 바 **/
 .menu-bar {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: center; /* 버튼을 수평으로 중앙 정렬 */
+    align-items: center; /* 수직으로 중앙 정렬 */
     padding: 15px;
 }
 
@@ -24,10 +25,16 @@ body {
     cursor: pointer;
 }
 
-.menu-bar button img {
-    width: 40px;
-    height: 40px;
+.menu-bar #menuButton img {
+    width: 180px;
+    height: 50px;
+    display: block; /* 중앙 정렬을 위해 이미지 자체도 블록 요소로 처리 */
 }
+
+/*.menu-bar #userButton img {*/
+/*    width: 40px;*/
+/*    height: 40px;*/
+/*}*/
 
 .chat-container {
     flex: 1;
@@ -173,24 +180,26 @@ body {
     height: 16px;
 }
 
-body .swiper-container {
+.swiper-container {
     max-width: 100%; /* 화면 너비 넘지 않도록 설정 */
     width: 100%;
     padding: 0 10px;
-    padding-right: 30px; /* 오른쪽 여백을 줘서 잘리는 문제 해결 */
     box-sizing: border-box; /* 패딩이 박스 안쪽에 포함되도록 설정 */
-    overflow: hidden; /* 좌우 스크롤바 방지 */
+    overflow-x: hidden; /* 가로 스크롤 방지 */
+    overflow-y: auto;   /* 세로 스크롤을 가능하게 설정 */
+    max-height: 200px;  /* 필요에 따라 최대 높이 설정 (예: 200px) */
 }
 
-body .swiper-wrapper {
+.swiper-wrapper {
     display: flex;
 }
 
-body .swiper-slide {
-    margin-right: 0; /* 슬라이드 사이의 간격이 문제를 일으키지 않도록 조정 */
+.swiper-slide {
+    flex-shrink: 0; /* 슬라이드가 줄어들지 않도록 설정 */
+    width: auto; /* 자동으로 너비를 계산하여 슬라이드를 맞춤 */
 }
 
-body .tag-button {
+.tag-button {
     background-color: #F5F5F5;
     border: 1px solid #cccccc;
     padding: 8px 12px;
@@ -198,7 +207,6 @@ body .tag-button {
     cursor: pointer;
     text-decoration: none; /* 밑줄 제거 */
     white-space: nowrap; /* 텍스트 줄바꿈 없이 한 줄로 */
-    min-width: 90px; /* 버튼의 최소 너비를 설정하여 줄바꿈 방지 */
     font-size: 14px; /* 텍스트 크기 */
     text-align: center;
 }

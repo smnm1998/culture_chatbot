@@ -18,8 +18,8 @@
 <body>
     <div class="main-container">
         <header class="menu-bar">
-            <button id="menuButton"><img src="{% static 'image/assistant/menu.svg' %}" alt="Menu" class="size-12"></button>
-            <button id="userButton"><img src="{% static 'image/assistant/user-circle.svg' %}" alt="User" class="size-12"></button>
+            <button id="menuButton"><img src="{% static 'image/assistant/logo.png' %}" alt="Menu" class="size-12"></button>
+{#            <button id="userButton"><img src="{% static 'image/assistant/user-circle.svg' %}" alt="User" class="size-12"></button>#}
         </header>
     
         <!-- 검색창 -->
@@ -37,7 +37,7 @@
         <div>
             <ul class="category-list">
                 <li><a href="{% url 'main-select' %}" class="category-select">추천</a></li>
-                <li><a href="{% url 'local-select' %}" >지역별2</a></li>
+                <li><a href="{% url 'local-select' %}" >지역별</a></li>
 <!--                <li><a href="{% url 'thema-select' %}">테마별</a></li>-->
                 <li><a href="{% url 'independence-select' %}">독립운동</a></li>
             </ul>
@@ -51,7 +51,7 @@
                     <div class="swiper-wrapper">
                         {% for assistant in assistants %}
                             <div class="swiper-slide tour-item">
-                                <a href="/chatbot/{{ assistant.id }}/" class="chatbot-link">
+                                <a href="/chatbot/{{ assistant.id }}/" onclick="setArrayIndex(1)" class="chatbot-link">
                                     <img src="{{ assistant.photo.url }}" alt="{{ assistant.name }}">
                                     <p class="tour-title">{{ assistant.name }}</p>
                                     <p class="tour-address"> {{ assistant.province.name }}, {{ assistant.city_county_town.name }}, {{ assistant.country }}</p>
@@ -79,6 +79,11 @@
                 },
             }));
         });
+
+        // 세션 스토리지에 배열 인덱스 저장
+        function setArrayIndex(index) {
+            sessionStorage.setItem('arrayIndex', index);
+        }
     </script>
 </body>
 </html>

@@ -17,8 +17,8 @@
     <div class="main-container">
         <!-- 메뉴 바 -->
         <header class="menu-bar">
-            <button id="menuButton"><img src="{% static 'image/assistant/menu.svg' %}" alt="Menu" class="size-12"></button>
-            <button id="userButton"><img src="{% static 'image/assistant/user-circle.svg' %}" alt="User" class="size-12"></button>
+            <button id="menuButton"><a href="{% url 'main-select' %}"><img src="{% static 'image/assistant/logo.png' %}" alt="Menu" class="size-12"></a></button>
+{#            <button id="userButton"><img src="{% static 'image/assistant/user-circle.svg' %}" alt="User"></button>#}
         </header>
 
         <!-- 검색창 -->
@@ -49,7 +49,7 @@
                     <div class="swiper-wrapper">
                         {% for assistant in assistants %}
                             <div class="swiper-slide tour-item">
-                                <a href="/chatbot/{{ assistant.id }}/" class="chatbot-link" style=" text-decoration: none; color: inherit;">
+                                <a href="/chatbot/{{ assistant.id }}/" onclick="setArrayIndex(2)" class="chatbot-link" style=" text-decoration: none; color: inherit;">
                                     <img src="{{ assistant.photo.url }}" alt="{{ assistant.name }}">
                                     <p class="tour-title">{{ assistant.name }}</p>
                                     <p class="tour-address"> {{ assistant.province.name }}, {{ assistant.city_county_town.name }}, {{ assistant.country }}</p>
@@ -77,6 +77,11 @@
                 },
             }));
         });
+
+    // 세션 스토리지에 배열 인덱스 저장
+    function setArrayIndex(index) {
+        sessionStorage.setItem('arrayIndex', index);
+    }
     </script>
 </body>
 </html>

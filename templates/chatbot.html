@@ -100,7 +100,6 @@
 
             // AI 메시지의 경우 action 버튼 추가
             if (sender === 'ai') {
-                console.log("AI message detected, adding action buttons..."); // 디버깅 로그
                 messageContainer.addClass('ai-message');
                 appendActions(messageContainer, text);
             } else {
@@ -161,7 +160,6 @@
 
         // AI 메시지에 action 버튼과 구분선을 추가하는 함수
         function appendActions(container, text) {
-            console.log("Appending action buttons..."); // 디버깅 로그
 
             // HTML에서 이미지 경로를 data-attribute로 가져옴
             const likeImg = $('.like-btn').data('like-img');

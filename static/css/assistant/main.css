@@ -153,7 +153,7 @@ body {
     width: 100%; /* 너비를 100%로 설정 */
     aspect-ratio: 1 / 1; /* 정방형으로 설정 */
     object-fit: cover; /* 이미지가 컨테이너를 채우도록 설정 */
-    border-radius: 10px;
+    border-radius: 20px;
 }
 
 .swiper-scrollbar,

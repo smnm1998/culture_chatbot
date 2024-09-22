@@ -76,10 +76,19 @@ def gpt_response_stream(request, id):
             try:
                 print("Calling OpenAI API...")  # OpenAI API 호출 전 출력
                 # OpenAI API를 통해 어시스턴트 호출
+
+                system_message = (
+                    f"당신은 {assistant.name} 입니다. "
+                    f"만약 사용자가 당신이 누구인지 묻는다면, 인공지능이라고 하지 말고, 주제에 맞는 역할로 답해주세요. "
+                    f"예를 들어, 당신이 역사적 인물이라면 그 인물의 말투와 성격에 맞추어 답변을 제공하세요. "
+                    f"상황에 따라 겸손하거나 진중한 말투로 이야기하며, 적절히 예의를 갖추어 답변하세요."
+                )
+
+                # OpenAI API를 통해 어시스턴트 호출
                 response = openai.ChatCompletion.create(
                     model="gpt-4",
                     messages=[
-                        {"role": "system", "content": f"당신은 {assistant.name} 어시스턴트입니다."},
+                        {"role": "system", "content": system_message},
                         {"role": "user", "content": question},
                     ],
                     stream=True

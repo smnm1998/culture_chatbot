@@ -65,10 +65,12 @@
 
         // Swiper 초기화
         var swiper = new Swiper('.swiper-container', {
-            slidesPerView: 4, // 한 화면에 4개의 태그가 보이도록 설정
-            spaceBetween: 15, // 슬라이드 간의 간격을 15px로 설정
-            freeMode: true, // 자유롭게 스크롤 가능하도록 설정
+            slidesPerView: 3.5, // 한 화면에 보이는 슬라이드 수
+            spaceBetween: 15,   // 슬라이드 간의 간격
+            freeMode: true,     // 슬라이드를 자유롭게 움직일 수 있도록 설정
+            watchOverflow: true, // 슬라이드가 넘치면 스크롤 방지
         });
+
 
         // 태그 버튼 클릭 시 바로 어시스턴트에 전송
         $('.tag-button').on('click', function () {

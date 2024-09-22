@@ -174,10 +174,12 @@ body {
 }
 
 body .swiper-container {
+    max-width: 100%; /* 화면 너비 넘지 않도록 설정 */
     width: 100%;
     padding: 0 10px;
     padding-right: 30px; /* 오른쪽 여백을 줘서 잘리는 문제 해결 */
     box-sizing: border-box; /* 패딩이 박스 안쪽에 포함되도록 설정 */
+    overflow: hidden; /* 좌우 스크롤바 방지 */
 }
 
 body .swiper-wrapper {

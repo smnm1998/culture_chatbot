@@ -1,0 +1,231 @@
+body {
+    font-family: 'Nanum Myeongjo', Serif;
+    background-color: #f2efe4;
+    margin: 0;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/** 메뉴 바 **/
+.menu-bar {
+    display: flex;
+    justify-content: center; /* 버튼을 수평으로 중앙 정렬 */
+    align-items: center; /* 수직으로 중앙 정렬 */
+    padding: 15px;
+}
+
+.menu-bar button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-bar #menuButton img {
+    width: 180px;
+    height: 50px;
+    display: block; /* 중앙 정렬을 위해 이미지 자체도 블록 요소로 처리 */
+}
+
+/*.menu-bar #userButton img {*/
+/*    width: 40px;*/
+/*    height: 40px;*/
+/*}*/
+
+.chat-container {
+    flex: 1;
+    overflow-y: auto;
+    margin: 0 5px;
+    padding: 1rem;
+    background-color: #f2efe4;
+}
+
+.message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: #f2efe4;
+    margin-bottom: 20px;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 5px 10px;
+    width: 100%;
+}
+
+.input-wrapper input {
+    font-family: 'Nanum Myeongjo', Serif;
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+
+.send-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.send-button img {
+    width: 24px;
+    height: 24px;
+}
+
+.message-container {
+    padding: 16px;
+    background-color: #ffffff;
+    color: black;
+    border-radius: 14px;
+    max-width: 70%;
+    position: relative;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #e9e1cd;
+    padding: 0 10px; /* Padding 조정 */
+}
+
+.ai-message {
+    align-self: flex-start;
+}
+
+.ai-message p {
+    margin-top: 0;
+}
+
+.msg-hr {
+    border: none;
+    height: 3px;
+    background-color: #f2efe4;
+    margin-top: -3px;
+    margin-bottom: 0;
+}
+
+.user-message .message-actions,
+.user-message .msg-hr {
+    display: none;
+}
+
+.message-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: flex-start; /* 기본적으로 왼쪽 정렬 */
+}
+
+.action-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-button-like {
+    order: 1; /* Like 버튼이 왼쪽에 위치 */
+}
+
+.action-button-unlike {
+    order: 2; /* Unlike 버튼이 그 다음에 위치 */
+}
+
+.action-button-cp {
+    margin-left: auto; /* Copy 버튼을 맨 오른쪽으로 이동 */
+}
+
+.action-button img {
+    width: 24px;
+    height: 24px;
+}
+
+.action-button-cp img {
+    width: 100%; /* Copy 버튼 이미지 크기 조정 */
+    height: 100%;
+}
+
+.message-content {
+    display: flex;
+    align-items: center;
+}
+
+.message-content img {
+    margin-left: 8px;
+    width: 16px;
+    height: 16px;
+}
+
+.swiper-container {
+    max-width: 100%; /* 화면 너비 넘지 않도록 설정 */
+    width: 100%;
+    padding: 0 10px;
+    box-sizing: border-box; /* 패딩이 박스 안쪽에 포함되도록 설정 */
+    overflow-x: hidden; /* 가로 스크롤 방지 */
+    overflow-y: auto;   /* 세로 스크롤을 가능하게 설정 */
+    max-height: 200px;  /* 필요에 따라 최대 높이 설정 (예: 200px) */
+}
+
+.swiper-wrapper {
+    display: flex;
+}
+
+.swiper-slide {
+    flex-shrink: 0; /* 슬라이드가 줄어들지 않도록 설정 */
+    width: auto; /* 자동으로 너비를 계산하여 슬라이드를 맞춤 */
+}
+
+.tag-button {
+    background-color: #F5F5F5;
+    border: 1px solid #cccccc;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    text-decoration: none; /* 밑줄 제거 */
+    white-space: nowrap; /* 텍스트 줄바꿈 없이 한 줄로 */
+    font-size: 14px; /* 텍스트 크기 */
+    text-align: center;
+}
+
+@media (max-width: 375px) {
+    body {
+        font-size: 14px;
+        background-position: top;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    body {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 1025px) {
+    body {
+        font-size: 18px;
+    }
+}

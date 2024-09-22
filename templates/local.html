@@ -127,6 +127,11 @@
             swiper2.update(); // Swiper 업데이트
         }
     });
+    
+    // 세션 스토리지에 배열 인덱스 저장
+    function setArrayIndex(index) {
+        sessionStorage.setItem('arrayIndex', index);
+    }
 
     // 선택된 도와 시에 맞는 어시스턴트 데이터 불러오기
     $('#cityList').on('click', '.tag-button', function() {
@@ -164,7 +169,7 @@
                             // 중복되는 텍스트 출력 방지하고, 어시스턴트 정보만 출력
                             $('#assistantList').append(`
                                 <div class="photo-item">
-                                    <a href="/chatbot/${assistant.id}/">
+                                    <a href="/chatbot/${assistant.id}/" onclick="setArrayIndex(1)">
                                         <img src="${assistant.photo}" alt="${assistant.name}">
                                         <p class="photo-title">${assistant.name}</p>
                                         <p class="photo-address"> ${province_name}, ${city_name}, ${assistant.country}</p>

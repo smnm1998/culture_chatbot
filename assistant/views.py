@@ -12,7 +12,7 @@ from openai import OpenAI, AssistantEventHandler
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+import re
 import logging
 logger = logging.getLogger(__name__)
 
@@ -103,6 +103,11 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 #         print(message_content.value)
 #         print("\n".join(citations))
 
+# 응답 처리 시 메타데이터 제거
+# 응답 처리 시 메타데이터 제거
+def clean_response(text):
+    return re.sub(r'【.*?】', '', text).strip()
+
 class EventHandler(AssistantEventHandler):
     def __init__(self):
         super().__init__()  # 상위 클래스 초기화 호출
@@ -110,12 +115,14 @@ class EventHandler(AssistantEventHandler):
 
     @override
     def on_text_created(self, text) -> None:
-        self.responses.append(text)
+        clean_text = clean_response(text.value)  # 'text.value'로 문자열을 추출
+        self.responses.append(clean_text)
 
     @override
     def on_message_done(self, message) -> None:
-        message_content = message.content[0].text
-        self.responses.append(message_content)
+        message_content = message.content[0].text.value  # 'text.value'로 문자열 추출
+        clean_text = clean_response(message_content)  # 메타데이터 제거 후 추가
+        self.responses.append(clean_text)
 
 
 
@@ -158,7 +165,7 @@ class ChatbotAPIView(APIView):
             with client.beta.threads.runs.stream(
                     thread_id=thread.id,
                     assistant_id=assistant_id,
-                    instructions="Please use the attached file to answer the user's question.",
+                    instructions="첨부된 파일을 이용해서 질문과 관련된 답을 찾아서 마치 사람과 대화하듯이 답을 해주세요. 첨부된 파일 안의 정보를 통해서, 그 인물처럼 텍스트를 출력하세요.첨부된 파일의 말투를 사용해서, 최대한 비슷하게 흉내내세요.실시간 정보로 검색해서 답을 하지 마세요 오로지 첨부파일의 내용만 이용해서 답하세요." ,
                     event_handler=event_handler,
             ) as stream:
                 stream.until_done()

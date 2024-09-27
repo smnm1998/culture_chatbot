@@ -4,6 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot</title>
+    <style>
+        /* 간단한 스타일링 */
+        #response-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            height: 400px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+        .message {
+            margin-bottom: 10px;
+        }
+        .user-message {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .assistant-message {
+            font-weight: normal;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
     <h1>Chatbot for {{ assistant_name }}</h1>
@@ -12,8 +34,6 @@
     <form id="chatbot-form">
         <label for="question">Ask a question:</label>
         <input type="text" id="question" name="question" required>
-
-        <!-- 백엔드에서 전달받은 assistant_id와 document_id를 숨겨진 필드에 자동으로 삽입 -->
         <input type="hidden" id="assistant_id" value="{{ assistant_id }}">
         <input type="hidden" id="document_id" value="{{ document_id }}">
         <button type="submit">Send</button>
@@ -49,9 +69,8 @@
             const assistantId = document.getElementById('assistant_id').value;
             const documentId = document.getElementById('document_id').value;
 
-            console.log("Assistant ID:", assistantId);
-            console.log("Document ID:", documentId);
-            console.log("Question:", question);
+            // 사용자가 입력한 질문을 화면에 추가
+            addMessage('user', question);
 
             // POST 요청에 사용할 데이터
             const data = {
@@ -61,7 +80,7 @@
             };
 
             // Fetch API를 사용하여 POST 요청 전송
-            fetch(`/api/chatbot/{{id}}/`, {  // '1' 대신 실제 assistant id 값 사용
+            fetch(`/api/chatbot/{{id}}/`, {  // 실제 백엔드 경로로 변경
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -77,19 +96,48 @@
                 }
             })
             .then(data => {
-                const responseContainer = document.getElementById('response-container');
-                
-                // data.response가 배열인지 확인 후 처리
+                // 챗봇의 응답을 화면에 추가
                 if (Array.isArray(data.response)) {
-                    responseContainer.innerText = data.response.join('\n');
+                    addMessage('assistant', data.response.join('\n'));
                 } else {
-                    responseContainer.innerText = data.response;  // 배열이 아닌 경우 처리
+                    addMessage('assistant', data.response);  // 배열이 아닌 경우 처리
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
+
+            // 입력 필드를 비우기
+            document.getElementById('question').value = '';
         });
+
+        // 메시지를 추가하는 함수
+        function addMessage(role, message) {
+            const responseContainer = document.getElementById('response-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+
+            if (role === 'user') {
+                messageDiv.classList.add('user-message');
+                messageDiv.innerText = `You: ${message}`;
+            } else if (role === 'assistant') {
+                messageDiv.classList.add('assistant-message');
+                messageDiv.innerText = `Assistant: ${message}`;
+            }
+
+            // 새 메시지를 기존 메시지 컨테이너에 추가
+            responseContainer.appendChild(messageDiv);
+
+            // 스크롤을 최신 메시지로 자동 이동
+            responseContainer.scrollTop = responseContainer.scrollHeight;
+        }
+
+
+
+// 텍스트에서 메타데이터를 제거하는 함수
+function cleanText(text) {
+    // 파일 인용과 같은 메타데이터 패턴 제거 (예:  text.replace(/【.*?】/g, '').trim();
+}
     </script>
 </body>
 </html>

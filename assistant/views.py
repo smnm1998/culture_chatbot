@@ -78,30 +78,45 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 # 이벤트 핸들러 정의 (스트리밍 응답 처리)
+# class EventHandler(AssistantEventHandler):
+#     @override
+#     def on_text_created(self, text) -> None:
+#         print(f"\nassistant > {text}", end="", flush=True)
+#
+#     @override
+#     def on_tool_call_created(self, tool_call):
+#         print(f"\nassistant > {tool_call.type}\n", flush=True)
+#
+#     @override
+#     def on_message_done(self, message) -> None:
+#         message_content = message.content[0].text
+#         annotations = message_content.annotations
+#         citations = []
+#         for index, annotation in enumerate(annotations):
+#             message_content.value = message_content.value.replace(
+#                 annotation.text, f"[{index}]"
+#             )
+#             if file_citation := getattr(annotation, "file_citation", None):
+#                 cited_file = client.files.retrieve(file_citation.file_id)
+#                 citations.append(f"[{index}] {cited_file.filename}")
+#
+#         print(message_content.value)
+#         print("\n".join(citations))
+
 class EventHandler(AssistantEventHandler):
-    @override
-    def on_text_created(self, text) -> None:
-        print(f"\nassistant > {text}", end="", flush=True)
+    def __init__(self):
+        super().__init__()  # 상위 클래스 초기화 호출
+        self.responses = []
 
     @override
-    def on_tool_call_created(self, tool_call):
-        print(f"\nassistant > {tool_call.type}\n", flush=True)
+    def on_text_created(self, text) -> None:
+        self.responses.append(text)
 
     @override
     def on_message_done(self, message) -> None:
         message_content = message.content[0].text
-        annotations = message_content.annotations
-        citations = []
-        for index, annotation in enumerate(annotations):
-            message_content.value = message_content.value.replace(
-                annotation.text, f"[{index}]"
-            )
-            if file_citation := getattr(annotation, "file_citation", None):
-                cited_file = client.files.retrieve(file_citation.file_id)
-                citations.append(f"[{index}] {cited_file.filename}")
+        self.responses.append(message_content)
 
-        print(message_content.value)
-        print("\n".join(citations))
 
 
 # Chatbot API (질문을 받아 OpenAI로 처리)
@@ -148,12 +163,14 @@ class ChatbotAPIView(APIView):
             ) as stream:
                 stream.until_done()
 
+            # 응답이 제대로 수집되었는지 로그로 확인
+            logger.debug(f"Responses collected: {event_handler.responses}")
+
             # 여기서는 실시간 출력이 콘솔로 이루어지므로 따로 응답을 반환하지 않음
-            return Response({"status": "Streaming complete"}, status=status.HTTP_200_OK)
+            return Response({"response": event_handler.responses}, status=status.HTTP_200_OK)
 
         except Exception as e:
             logger.error(f"Error processing request: {str(e)}")  # 에러 로그 추가
-
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 # # GPT-4 실시간 스트림 응답 처리

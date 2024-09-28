@@ -60,10 +60,12 @@ class AssistantListView(generics.ListAPIView):
             return Assistant.objects.filter(city_county_town__name=city_name, city_county_town__province__name=province_name)
         return Assistant.objects.none()
 # -------------------------------------------------------------
-# Chatbot 클래스 기반 뷰
+# 챗봇 페이지 렌더링
 def chatbot_view(request, id):
-    assistant = get_object_or_404(Assistant, id=id)
+    # 새로운 어시스턴트로 이동할 때 세션에서 스레드 ID 삭제
+    request.session.pop('thread_id', None)
 
+    assistant = get_object_or_404(Assistant, id=id)
     return render(request, 'chatbot.html', {
         'id': assistant.id,
         'assistant_id': assistant.assistant_id,
@@ -71,39 +73,9 @@ def chatbot_view(request, id):
         'assistant_name': assistant.name
     })
 
-# 챗봇 페이지 렌더링
-# openai.api_key = os.getenv("OPENAI_API_KEY")
-# OpenAI 클라이언트 설정
+
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-
-# 이벤트 핸들러 정의 (스트리밍 응답 처리)
-# class EventHandler(AssistantEventHandler):
-#     @override
-#     def on_text_created(self, text) -> None:
-#         print(f"\nassistant > {text}", end="", flush=True)
-#
-#     @override
-#     def on_tool_call_created(self, tool_call):
-#         print(f"\nassistant > {tool_call.type}\n", flush=True)
-#
-#     @override
-#     def on_message_done(self, message) -> None:
-#         message_content = message.content[0].text
-#         annotations = message_content.annotations
-#         citations = []
-#         for index, annotation in enumerate(annotations):
-#             message_content.value = message_content.value.replace(
-#                 annotation.text, f"[{index}]"
-#             )
-#             if file_citation := getattr(annotation, "file_citation", None):
-#                 cited_file = client.files.retrieve(file_citation.file_id)
-#                 citations.append(f"[{index}] {cited_file.filename}")
-#
-#         print(message_content.value)
-#         print("\n".join(citations))
-
-# 응답 처리 시 메타데이터 제거
 # 응답 처리 시 메타데이터 제거
 def clean_response(text):
     return re.sub(r'【.*?】', '', text).strip()
@@ -133,52 +105,61 @@ class ChatbotAPIView(APIView):
         logger.debug(f"Request Data: {request.data}")
 
         # assistant_id와 document_id는 DB에서 가져옴
-        assistant_id = request.data.get('assistant_id')  # 프론트엔드에서 전달된 값 또는 DB에서 가져오기
-        document_id = request.data.get('document_id')  # 프론트엔드에서 전달된 값 또는 DB에서 가져오기
-        question = request.data.get('question')  # 사용자가 입력한 질문
+        assistant_id = request.data.get('assistant_id')
+        document_id = request.data.get('document_id')
+        question = request.data.get('question')
 
-        # 로그로 데이터 확인
-        logger.debug(f"Assistant ID: {assistant_id}, Document ID: {document_id}, Question: {question}")
+        # 세션에서 스레드 ID 가져오기 (없을 경우 첫 질문이므로 새로 생성)
+        thread_id = request.session.get('thread_id')
 
-        # 데이터가 없는 경우에 대한 오류 처리 추가
-        if not assistant_id or not document_id or not question:
-            return Response({"error": "Invalid data provided"}, status=status.HTTP_400_BAD_REQUEST)
+        # 첫 질문일 경우 새로운 스레드 생성
+        if not thread_id:
+            try:
+                thread = client.beta.threads.create(
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": question,
+                            "attachments": [
+                                {"file_id": document_id, "tools": [{"type": "file_search"}]}
+                            ]
+                        }
+                    ]
+                )
+                request.session['thread_id'] = thread.id
+                thread_id = thread.id  # 이후 질문에서 사용
 
+            except Exception as e:
+                logger.error(f"Error creating new thread: {str(e)}")
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        # 이벤트 핸들러 생성
-        event_handler = EventHandler()
-
-        # 스레드 생성 및 스트리밍 처리
+        # 기존 스레드로 질문을 이어서 보냄 (대화의 맥락 유지)
         try:
-            thread = client.beta.threads.create(
-                messages=[
-                    {
-                        "role": "user",
-                        "content": question,
-                        "attachments": [
-                            {"file_id": document_id, "tools": [{"type": "file_search"}]}
-                        ]
-                    }
-                ]
-            )
-
+            event_handler = EventHandler()
             with client.beta.threads.runs.stream(
-                    thread_id=thread.id,
+                    thread_id=thread_id,
                     assistant_id=assistant_id,
-                    instructions="첨부된 파일을 이용해서 질문과 관련된 답을 찾아서 마치 사람과 대화하듯이 답을 해주세요. 첨부된 파일 안의 정보를 통해서, 그 인물처럼 텍스트를 출력하세요.첨부된 파일의 말투를 사용해서, 최대한 비슷하게 흉내내세요.실시간 정보로 검색해서 답을 하지 마세요 오로지 첨부파일의 내용만 이용해서 답하세요." ,
+                    instructions=f"""
+                        첨부된 파일에서 "{question}"에 대한 답변을 찾아서 제공하세요. 
+                        질문과 관련된 파일의 정보를 바탕으로 정확한 답변을 제공하세요. 
+                        불필요한 정보는 생략하고, 질문에 맞는 관련 정보만 제공하세요.
+                        첨부된 파일 안의 정보를 통해서, 그 인물처럼 텍스트를 출력하세요.
+                        첨부된 파일의 말투를 사용해서, 최대한 비슷하게 흉내내세요.
+                        모든 응답은 JSON 형식으로 반환하세요
+                    """,
                     event_handler=event_handler,
             ) as stream:
                 stream.until_done()
 
-            # 응답이 제대로 수집되었는지 로그로 확인
             logger.debug(f"Responses collected: {event_handler.responses}")
 
-            # 여기서는 실시간 출력이 콘솔로 이루어지므로 따로 응답을 반환하지 않음
             return Response({"response": event_handler.responses}, status=status.HTTP_200_OK)
 
         except Exception as e:
-            logger.error(f"Error processing request: {str(e)}")  # 에러 로그 추가
+            logger.error(f"Error processing request: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 # # GPT-4 실시간 스트림 응답 처리
 # def gpt_response_stream(request, id):

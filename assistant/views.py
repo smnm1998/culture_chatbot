@@ -87,8 +87,9 @@ class EventHandler(AssistantEventHandler):
 
     @override
     def on_text_created(self, text) -> None:
-        clean_text = clean_response(text.value)  # 'text.value'로 문자열을 추출
-        self.responses.append(clean_text)
+        # clean_text = clean_response(text.value)  # 'text.value'로 문자열을 추출
+        # self.responses.append(clean_text)
+        pass
 
     @override
     def on_message_done(self, message) -> None:
@@ -145,7 +146,8 @@ class ChatbotAPIView(APIView):
                         불필요한 정보는 생략하고, 질문에 맞는 관련 정보만 제공하세요.
                         첨부된 파일 안의 정보를 통해서, 그 인물처럼 텍스트를 출력하세요.
                         첨부된 파일의 말투를 사용해서, 최대한 비슷하게 흉내내세요.
-                        모든 응답은 JSON 형식으로 반환하세요
+                        첨부된 파일로 질문의 답을 할 수 없을 때는 실시간 정보를 이용하세요.
+                        
                     """,
                     event_handler=event_handler,
             ) as stream:

@@ -233,13 +233,14 @@
 
             // 텍스트를 한 글자씩 출력하는 타이핑 효과 함수
             function typeText(element, text, callback, index = 0) {
+                // 전체 텍스트에서 한 글자씩 추가
                 if (index < text.length) {
-                    element.append(text.charAt(index));
+                    element.text(text.substring(0, index + 1)); // 앞에서부터 index + 1까지 출력
                     setTimeout(function () {
                         typeText(element, text, callback, index + 1);
-                    }, 50); // 타이핑 효과 딜레이
+                    }, 50); // 타이핑 효과 딜레이 (ms 단위)
                 } else {
-                    if (callback) callback();
+                    if (callback) callback(); // 타이핑이 끝나면 콜백 함수 호출
                 }
             }
 

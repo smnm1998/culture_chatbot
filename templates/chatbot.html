@@ -3,46 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot</title>
-    <style>
-        /* 간단한 스타일링 */
-        #response-container {
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            padding: 10px;
-            height: 400px;
-            overflow-y: auto;
-            background-color: #f9f9f9;
-        }
-        .message {
-            margin-bottom: 10px;
-        }
-        .user-message {
-            font-weight: bold;
-            color: #007bff;
-        }
-        .assistant-message {
-            font-weight: normal;
-            color: #333;
-        }
-    </style>
+    <title>Chatbot for {{ assistant_name }}</title>
+
+    <!-- 추가된 부분 -->
+    <link rel="stylesheet" href="//fonts.googleapis.com/earlyaccess/nanummyeongjo.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% load static %}
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <link rel="stylesheet" href="{% static 'css/assistant/chatbot.css' %}">
 </head>
 <body>
-    <h1>Chatbot for {{ assistant_name }}</h1>
+    <div class="page-container">
+        <!-- 추가된 메뉴 바 -->
+        <header class="menu-bar">
+            <button id="menuButton">
+                <a href="{% url 'main-select' %}">
+                    <img src="{% static 'image/assistant/logo.png' %}" alt="Menu" class="size-12">
+                </a>
+            </button>
+        </header>
 
-    <!-- 사용자 질문 입력 폼 -->
-    <form id="chatbot-form">
-        <label for="question">Ask a question:</label>
-        <input type="text" id="question" name="question" required>
-        <input type="hidden" id="assistant_id" value="{{ assistant_id }}">
-        <input type="hidden" id="document_id" value="{{ document_id }}">
-        <button type="submit">Send</button>
-    </form>
+        <!-- 채팅 컨테이너 추가 -->
+        <div class="chat-container" id="chatContainer">
+            <div id="messageList" class="message-list">
+                <div class="message-container ai-message">
+                    <div class="message-content">
+                        <p id="welcomeMessage"></p>
+                    </div>
+                    <hr class="msg-hr">
+                    <div class="message-actions">
+                        <button class="action-button like-btn" data-like-img="{% static 'image/assistant/like.svg' %}">
+                            <img src="{% static 'image/assistant/like.svg' %}" alt="좋아요">
+                        </button>
+                        <button class="action-button unlike-btn" data-unlike-img="{% static 'image/assistant/unlike.svg' %}">
+                            <img src="{% static 'image/assistant/unlike.svg' %}" alt="싫어요">
+                        </button>
+                        <button class="action-button action-button-cp copy-btn" data-copy-img="{% static 'image/assistant/copy.svg' %}" onclick="handleCopy(this)">
+                            <img src="{% static 'image/assistant/copy.svg' %}" alt="복사">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- 응답을 표시할 부분 -->
-    <div id="response-container"></div>
+        <!-- 추가된 Swiper 슬라이더 -->
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+            </div>
+        </div>
 
+        <!-- 입력 컨테이너 수정 -->
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input id="messageInput" type="text" placeholder="Ask a question...">
+                <input type="hidden" id="assistant_id" value="{{ assistant_id }}">
+                <input type="hidden" id="document_id" value="{{ document_id }}">
+                <button id="sendButton" class="send-button">
+                    <img src="{% static 'image/assistant/message-send.svg' %}" alt="Send">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 이미지 URL을 JavaScript 변수로 전달 -->
     <script>
+        const likeImgUrl = "{% static 'image/assistant/like.svg' %}";
+        const unlikeImgUrl = "{% static 'image/assistant/unlike.svg' %}";
+        const copyImgUrl = "{% static 'image/assistant/copy.svg' %}";
+    </script>
+
+    <!-- 추가된 스크립트 -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        // 기존의 getCookie 함수 유지
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -60,84 +93,192 @@
 
         const csrftoken = getCookie('csrftoken');
 
-        // 폼 전송 이벤트 처리
-        document.getElementById('chatbot-form').addEventListener('submit', function(event) {
-            event.preventDefault();
+        $(document).ready(function () {
+            const apiBaseUrl = '/api/chatbot/{{ id }}/';
 
-            // 입력값 가져오기
-            const question = document.getElementById('question').value;
-            const assistantId = document.getElementById('assistant_id').value;
-            const documentId = document.getElementById('document_id').value;
-
-            // 사용자가 입력한 질문을 화면에 추가
-            addMessage('user', question);
-
-            // POST 요청에 사용할 데이터
-            const data = {
-                assistant_id: assistantId,
-                document_id: documentId,
-                question: question
-            };
-
-            // Fetch API를 사용하여 POST 요청 전송
-            fetch(`/api/chatbot/{{id}}/`, {  // 실제 백엔드 경로로 변경
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken
-                },
-                body: JSON.stringify(data),
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('HTTP error, status = ' + response.status);
-                }
-            })
-            .then(data => {
-                // 챗봇의 응답을 화면에 추가
-                if (Array.isArray(data.response)) {
-                    addMessage('assistant', data.response.join('\n'));
-                } else {
-                    addMessage('assistant', data.response);  // 배열이 아닌 경우 처리
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-
-            // 입력 필드를 비우기
-            document.getElementById('question').value = '';
-        });
-
-        // 메시지를 추가하는 함수
-        function addMessage(role, message) {
-            const responseContainer = document.getElementById('response-container');
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
-
-            if (role === 'user') {
-                messageDiv.classList.add('user-message');
-                messageDiv.innerText = `You: ${message}`;
-            } else if (role === 'assistant') {
-                messageDiv.classList.add('assistant-message');
-                messageDiv.innerText = `Assistant: ${message}`;
+            function getArrayIndexFromSession() {
+                return sessionStorage.getItem('arrayIndex') || 1; // 기본값은 1
             }
 
-            // 새 메시지를 기존 메시지 컨테이너에 추가
-            responseContainer.appendChild(messageDiv);
+            const arrayIndex = parseInt(getArrayIndexFromSession()) - 1;
 
-            // 스크롤을 최신 메시지로 자동 이동
-            responseContainer.scrollTop = responseContainer.scrollHeight;
-        }
+            const welcomeMessages = [
+                "{{ assistant_name }}입니다! 무엇을 도와드릴까요?",
+                "{{ assistant_name }}(이)라네. 어떤 것이 궁금해 찾아 왔나?"
+            ];
 
+            $('#welcomeMessage').text(welcomeMessages[arrayIndex]);
 
+            const sectionTags = [
+                ['{{ assistant_name }}(는)은 무엇인가요?', '{{ assistant_name }}의 대표 인물은 어떤 분인가요?', '{{ assistant_name }}의 특징은 무엇인가요?', '{{ assistant_name }}에 어울리는 것은 무엇인가요?'],
+                ['당신은 누구신가요?', '어떤 이야기를 남기셨나요?', '또다른 활동은 어떤게 있나요?', '어디서 주로 활동하셨나요?', '가장 지키고자 했던 가치는 무엇인가요?'],
+            ];
 
-// 텍스트에서 메타데이터를 제거하는 함수
-function cleanText(text) {
-    // 파일 인용과 같은 메타데이터 패턴 제거 (예:  text.replace(/【.*?】/g, '').trim();
-}
+            var swiper = new Swiper('.swiper-container', {
+                slidesPerView: 'auto',
+                spaceBetween: 15,
+                freeMode: true,
+                watchOverflow: true,
+            });
+
+            function updateSwiperTags(arrayIndex) {
+                const swiperWrapper = $('.swiper-wrapper');
+                swiperWrapper.empty();
+
+                const tags = sectionTags[arrayIndex];
+                tags.forEach(tag => {
+                    const slide = $(`<div class="swiper-slide">
+                        <button class="tag-button">${tag}</button>
+                    </div>`);
+                    swiperWrapper.append(slide);
+                });
+
+                swiper.update();
+            }
+
+            updateSwiperTags(arrayIndex);
+
+            $('.swiper-wrapper').on('click', '.tag-button', function () {
+                const tagText = $(this).text().trim();
+                appendMessage(tagText, 'user');
+                sendMessageToBot(tagText);
+            });
+
+            $('#sendButton').on('click', function () {
+                const message = $('#messageInput').val().trim();
+                if (message) {
+                    appendMessage(message, 'user');
+                    $('#messageInput').val('');
+                    sendMessageToBot(message);
+                }
+            });
+
+            function appendMessage(text, sender) {
+                const messageContainer = $('<div>', { class: 'message-container' });
+                const messageContent = $('<div>', { class: 'message-content' });
+                const messageText = $('<p>').text(text);
+
+                messageContent.append(messageText);
+                messageContainer.append(messageContent);
+
+                if (sender === 'ai') {
+                    messageContainer.addClass('ai-message');
+                    appendActions(messageContainer, text);
+                } else {
+                    messageContainer.addClass('user-message');
+                }
+
+                $('#messageList').append(messageContainer);
+                scrollToBottom();
+            }
+
+            function scrollToBottom() {
+                const chatContainer = $('#chatContainer');
+                chatContainer.scrollTop(chatContainer[0].scrollHeight);
+            }
+
+            function sendMessageToBot(message) {
+                const assistantId = $('#assistant_id').val();
+                const documentId = $('#document_id').val();
+
+                const data = {
+                    assistant_id: assistantId,
+                    document_id: documentId,
+                    question: message
+                };
+
+                fetch(apiBaseUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw new Error('HTTP error, status = ' + response.status);
+                    }
+                })
+                .then(data => {
+                    if (Array.isArray(data.response)) {
+                        appendMessageWithTypingEffect(data.response.join('\n'), 'ai');
+                    } else {
+                        appendMessageWithTypingEffect(data.response, 'ai');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    appendMessage('챗봇 답변을 가져오는 중 오류가 발생했습니다.', 'ai');
+                });
+            }
+
+            // AI 메시지를 한 글자씩 타이핑 효과로 추가하는 함수
+            function appendMessageWithTypingEffect(text, sender) {
+                const messageContainer = $('<div>', { class: 'message-container ai-message' });
+                const messageContent = $('<div>', { class: 'message-content' }).append($('<p>'));
+                messageContainer.append(messageContent);
+                $('#messageList').append(messageContainer);
+
+                const messageElement = messageContent.find('p');
+
+                // 한 글자씩 타이핑
+                typeText(messageElement, text, function() {
+                    // 타이핑이 끝난 후에 액션 버튼 추가
+                    appendActions(messageContainer, text);
+                });
+            }
+
+            // 텍스트를 한 글자씩 출력하는 타이핑 효과 함수
+            function typeText(element, text, callback, index = 0) {
+                if (index < text.length) {
+                    element.append(text.charAt(index));
+                    setTimeout(function () {
+                        typeText(element, text, callback, index + 1);
+                    }, 50); // 타이핑 효과 딜레이
+                } else {
+                    if (callback) callback();
+                }
+            }
+
+            function appendActions(container, text) {
+                // 여기서 이미지 URL 변수를 사용
+                const actionsContainer = $(`
+                    <div>
+                        <hr class="msg-hr">
+                        <div class="message-actions">
+                            <button class="action-button">
+                                <img src="${likeImgUrl}" alt="좋아요">
+                            </button>
+                            <button class="action-button">
+                                <img src="${unlikeImgUrl}" alt="싫어요">
+                            </button>
+                            <button class="action-button action-button-cp" onclick="handleCopy(this)">
+                                <img src="${copyImgUrl}" alt="복사">
+                            </button>
+                        </div>
+                    </div>
+                `);
+
+                container.append(actionsContainer);
+            }
+
+            window.handleCopy = function (button) {
+                const messageText = $(button).closest('.message-container').find('.message-content p').text();
+
+                if (messageText) {
+                    navigator.clipboard.writeText(messageText).then(() => {
+                        console.log("Text copied to clipboard:", messageText);
+                    }).catch(err => {
+                        console.error('복사 오류:', err);
+                    });
+                } else {
+                    console.error('No text found to copy.');
+                }
+            };
+        });
     </script>
 </body>
 </html>

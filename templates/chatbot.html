@@ -18,7 +18,7 @@
         <header class="menu-bar">
             <button id="menuButton">
                 <a href="{% url 'main-select' %}">
-                    <img src="{% static 'image/assistant/logo.png' %}" alt="Menu" class="size-12">
+                    <img src="{% static 'image/assistant/newlogo.png' %}" alt="Menu" class="size-12">
                 </a>
             </button>
         </header>
@@ -55,7 +55,7 @@
         <!-- 입력 컨테이너 수정 -->
         <div class="input-container">
             <div class="input-wrapper">
-                <input id="messageInput" type="text" placeholder="Ask a question...">
+                <input id="messageInput" type="text" placeholder="무엇이든 물어보세요...">
                 <input type="hidden" id="assistant_id" value="{{ assistant_id }}">
                 <input type="hidden" id="document_id" value="{{ document_id }}">
                 <button id="sendButton" class="send-button">

@@ -26,8 +26,8 @@ body {
 }
 
 .menu-bar #menuButton img {
-    width: 85px;
-    height: 85px;
+    width: 100px;
+    height: 100px;
     display: block; /* 중앙 정렬을 위해 이미지 자체도 블록 요소로 처리 */
 }
 

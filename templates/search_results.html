@@ -46,7 +46,7 @@
             {% if results %}
                 {% for assistant in results %}
                     <div class="photo-item">
-                        <a href="/chatbot/{{ assistant.id }}/">
+                        <a href="/chatbot/{{ assistant.id }}/" onclick="setArrayIndex(2)" >
                             <img src="{{ assistant.photo.url }}" alt="{{ assistant.name }}">
                             <p class="photo-title">{{ assistant.name }}</p>
                             <p class="photo-address"> {{ assistant.province.name }}, {{ assistant.city_county_town.name }}, {{ assistant.country }}</p>
@@ -59,6 +59,13 @@
         </div>
     </div>
 </body>
+
+<script>
+    // 세션 스토리지에 배열 인덱스 저장
+    function setArrayIndex(index) {
+        sessionStorage.setItem('arrayIndex', index);
+    }
+</script>
 </html>
 
 

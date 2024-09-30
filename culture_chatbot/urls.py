@@ -22,7 +22,7 @@ from django.shortcuts import redirect
 
 
 urlpatterns = [
-    path('admin', admin.site.urls),
+    path('admin/', admin.site.urls),
 
     path('', include('assistant.urls')),  # assistant 앱의 URL 포함
 

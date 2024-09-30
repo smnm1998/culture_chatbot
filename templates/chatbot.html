@@ -28,7 +28,7 @@
             <div id="messageList" class="message-list">
                 <div class="message-container ai-message">
                     <div class="message-content">
-                        <p id="welcomeMessage"></p>
+                        <p id="welcomeMessage">{{ assistant.welcome_message }}</p>
                     </div>
                     <hr class="msg-hr">
                     <div class="message-actions">
@@ -96,24 +96,20 @@
         $(document).ready(function () {
             const apiBaseUrl = '/api/chatbot/{{ id }}/';
 
-            function getArrayIndexFromSession() {
-                return sessionStorage.getItem('arrayIndex') || 1; // 기본값은 1
-            }
+            // 서버에서 전달된 질문 데이터를 사용
+            const questions = {{ questions|safe }};  // 템플릿에서 안전하게 질문 리스트 전달
+            
+            {#// 환영 메시지 설정#}
+            {#const welcomeMessages = [#}
+            {#    "{{ assistant_name }}입니다! 무엇을 도와드릴까요?"#}
+            {#];#}
+            {##}
+            {##}
+            {#$('#welcomeMessage').text(welcomeMessages[0]);#}
 
-            const arrayIndex = parseInt(getArrayIndexFromSession()) - 1;
+            
 
-            const welcomeMessages = [
-                "{{ assistant_name }}입니다! 무엇을 도와드릴까요?",
-                "{{ assistant_name }}(이)라네. 어떤 것이 궁금해 찾아 왔나?"
-            ];
-
-            $('#welcomeMessage').text(welcomeMessages[arrayIndex]);
-
-            const sectionTags = [
-                ['{{ assistant_name }}(는)은 무엇인가요?', '{{ assistant_name }}의 대표 인물은 어떤 분인가요?', '{{ assistant_name }}의 특징은 무엇인가요?', '{{ assistant_name }}에 어울리는 것은 무엇인가요?'],
-                ['당신은 누구신가요?', '어떤 이야기를 남기셨나요?', '또다른 활동은 어떤게 있나요?', '어디서 주로 활동하셨나요?', '가장 지키고자 했던 가치는 무엇인가요?'],
-            ];
-
+            // Swiper 슬라이더 초기화
             var swiper = new Swiper('.swiper-container', {
                 slidesPerView: 'auto',
                 spaceBetween: 15,
@@ -121,22 +117,25 @@
                 watchOverflow: true,
             });
 
-            function updateSwiperTags(arrayIndex) {
+            // Swiper 슬라이더에 질문 추가
+            function updateSwiperTags() {
                 const swiperWrapper = $('.swiper-wrapper');
                 swiperWrapper.empty();
-
-                const tags = sectionTags[arrayIndex];
-                tags.forEach(tag => {
-                    const slide = $(`<div class="swiper-slide">
-                        <button class="tag-button">${tag}</button>
-                    </div>`);
-                    swiperWrapper.append(slide);
+        
+                // questions 배열을 사용해 버튼 추가
+                questions.forEach(question => {
+                    if (question) {
+                        const slide = $(`<div class="swiper-slide">
+                            <button class="tag-button">${question}</button>
+                        </div>`);
+                        swiperWrapper.append(slide);
+                    }
                 });
-
+        
                 swiper.update();
             }
-
-            updateSwiperTags(arrayIndex);
+        
+            updateSwiperTags();
 
             $('.swiper-wrapper').on('click', '.tag-button', function () {
                 const tagText = $(this).text().trim();

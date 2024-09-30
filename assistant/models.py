@@ -23,6 +23,23 @@ class Assistant(models.Model):
     city_county_town = models.ForeignKey('CityCountyTown', on_delete=models.CASCADE)  # 시군읍 정보
     document_id = models.CharField(max_length=255, null=True, blank=True)  # 문서 ID를 저장하는 필드 추가
 
+
+    # welcome message
+    welcome_message = models.TextField(default='환영합니다! 무엇을 도와드릴까요?')  # Store a single welcome message
+
+
+    # 질문 필드 추가
+    question_1 = models.CharField(max_length=255, null=True, blank=True)
+    question_2 = models.CharField(max_length=255, null=True, blank=True)
+    question_3 = models.CharField(max_length=255, null=True, blank=True)
+    question_4 = models.CharField(max_length=255, null=True, blank=True)
+    question_5 = models.CharField(max_length=255, null=True, blank=True)
+    question_6 = models.CharField(max_length=255, null=True, blank=True)
+    question_7 = models.CharField(max_length=255, null=True, blank=True)
+    question_8 = models.CharField(max_length=255, null=True, blank=True)
+    question_9 = models.CharField(max_length=255, null=True, blank=True)
+    question_10 = models.CharField(max_length=255, null=True, blank=True)
+
     def __str__(self):
         return self.name
 

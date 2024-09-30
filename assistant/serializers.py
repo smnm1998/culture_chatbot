@@ -20,4 +20,4 @@ class AssistantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Assistant
-        fields = ['id', 'name', 'photo', 'description', 'country', 'province', 'city_county_town', 'assistant_variable']
+        fields = ['id', 'name', 'photo', 'description', 'country', 'province', 'city_county_town', 'document_id']

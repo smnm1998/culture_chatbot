@@ -26,8 +26,8 @@ body {
 }
 
 .menu-bar #menuButton img {
-    width: 100px;
-    height: 100px;
+    width: 70px;
+    height: 70px;
     display: block; /* 중앙 정렬을 위해 이미지 자체도 블록 요소로 처리 */
 }
 
@@ -119,7 +119,7 @@ body {
 
 .photo-item img {
     width: 100%; /* 이미지의 너비를 100%로 설정 */
-    height: 76%; /* 높이를 60%로 설정 */
+    aspect-ratio: 1 / 1; /* 높이를 60%로 설정 */
     object-fit: cover; /* 이미지가 컨테이너를 꽉 채우도록 함 */
     border-radius: 20px;
 }

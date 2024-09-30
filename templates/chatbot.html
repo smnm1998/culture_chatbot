@@ -23,24 +23,29 @@
             </button>
         </header>
 
-        <!-- 채팅 컨테이너 추가 -->
-        <div class="chat-container" id="chatContainer">
+        <!-- 채팅 컨테이너 -->
+        <div id="chatContainer" class="chat-container">
             <div id="messageList" class="message-list">
                 <div class="message-container ai-message">
-                    <div class="message-content">
-                        <p id="welcomeMessage">{{ assistant.welcome_message }}</p>
-                    </div>
-                    <hr class="msg-hr">
-                    <div class="message-actions">
-                        <button class="action-button like-btn" data-like-img="{% static 'image/assistant/like.svg' %}">
-                            <img src="{% static 'image/assistant/like.svg' %}" alt="좋아요">
-                        </button>
-                        <button class="action-button unlike-btn" data-unlike-img="{% static 'image/assistant/unlike.svg' %}">
-                            <img src="{% static 'image/assistant/unlike.svg' %}" alt="싫어요">
-                        </button>
-                        <button class="action-button action-button-cp copy-btn" data-copy-img="{% static 'image/assistant/copy.svg' %}" onclick="handleCopy(this)">
-                            <img src="{% static 'image/assistant/copy.svg' %}" alt="복사">
-                        </button>
+                    <img src="{{ assistant.photo.url }}" alt="{{ assistant.name }}" alt="Assistant Profile" class="profile-image">
+                    <div class="message-body">
+                        <div class="message-content">
+                            <p id="welcomeMessage">{{ assistant.welcome_message }}</p>
+                            <div class="actions-wrapper">
+                                <hr class="msg-hr">
+                                <div class="message-actions">
+                                    <button class="action-button like-btn" data-like-img="{% static 'image/assistant/like.svg' %}">
+                                        <img src="{% static 'image/assistant/like.svg' %}" alt="좋아요">
+                                    </button>
+                                    <button class="action-button unlike-btn" data-unlike-img="{% static 'image/assistant/unlike.svg' %}">
+                                        <img src="{% static 'image/assistant/unlike.svg' %}" alt="싫어요">
+                                    </button>
+                                    <button class="action-button action-button-cp copy-btn" data-copy-img="{% static 'image/assistant/copy.svg' %}" onclick="handleCopy(this)">
+                                        <img src="{% static 'image/assistant/copy.svg' %}" alt="복사">
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -94,20 +99,25 @@
         const csrftoken = getCookie('csrftoken');
 
         $(document).ready(function () {
-            const apiBaseUrl = '/api/chatbot/{{ id }}/';
+        const apiBaseUrl = '/api/chatbot/{{ id }}/';  // 서버의 API URL이 올바른지 확인
+            let isUserScrollingUp = true;
 
             // 서버에서 전달된 질문 데이터를 사용
             const questions = {{ questions|safe }};  // 템플릿에서 안전하게 질문 리스트 전달
-            
-            {#// 환영 메시지 설정#}
-            {#const welcomeMessages = [#}
-            {#    "{{ assistant_name }}입니다! 무엇을 도와드릴까요?"#}
-            {#];#}
-            {##}
-            {##}
-            {#$('#welcomeMessage').text(welcomeMessages[0]);#}
 
-            
+            // 입력창 및 버튼 비활성화
+            function disableInput() {
+                $('#messageInput').prop('disabled', true);
+                $('#sendButton').prop('disabled', true);
+                $('.tag-button').prop('disabled', true);
+            }
+
+            // 입력창 및 버튼 활성화
+            function enableInput() {
+                $('#messageInput').prop('disabled', false);
+                $('#sendButton').prop('disabled', false);
+                $('.tag-button').prop('disabled', false);
+            }
 
             // Swiper 슬라이더 초기화
             var swiper = new Swiper('.swiper-container', {
@@ -121,7 +131,7 @@
             function updateSwiperTags() {
                 const swiperWrapper = $('.swiper-wrapper');
                 swiperWrapper.empty();
-        
+
                 // questions 배열을 사용해 버튼 추가
                 questions.forEach(question => {
                     if (question) {
@@ -131,10 +141,10 @@
                         swiperWrapper.append(slide);
                     }
                 });
-        
+
                 swiper.update();
             }
-        
+
             updateSwiperTags();
 
             $('.swiper-wrapper').on('click', '.tag-button', function () {
@@ -152,19 +162,45 @@
                 }
             });
 
+            // 메시지를 화면에 추가하는 함수
             function appendMessage(text, sender) {
                 const messageContainer = $('<div>', { class: 'message-container' });
+                const messageBody = $('<div>', { class: 'message-body' });
                 const messageContent = $('<div>', { class: 'message-content' });
-                const messageText = $('<p>').text(text);
-
+                const messageText = $('<p>').text(text);  // 전달된 텍스트를 사용
                 messageContent.append(messageText);
-                messageContainer.append(messageContent);
 
                 if (sender === 'ai') {
+                    const profileImage = $('<img>', {
+                        src: '{% static "image/assistant/user-circle.svg" %}',
+                        alt: 'Assistant Profile',
+                        class: 'profile-image'
+                    });
+
+                    // 액션 버튼과 구분선을 메시지 내용 안에 추가
+                    const actionsContainer = $(`
+                        <div class="actions-wrapper">
+                            <hr class="msg-hr">
+                            <div class="message-actions">
+                                <button class="action-button"><img src="{% static 'image/assistant/like.svg' %}" alt="좋아요"></button>
+                                <button class="action-button"><img src="{% static 'image/assistant/unlike.svg' %}" alt="싫어요"></button>
+                                <button class="action-button action-button-cp" onclick="handleCopy(this)">
+                                    <img src="{% static 'image/assistant/copy.svg' %}" alt="복사">
+                                </button>
+                            </div>
+                        </div>
+                    `);
+
+                    messageContent.append(actionsContainer); // 액션 버튼을 message-content 안에 추가
+                    messageBody.append(messageContent);
                     messageContainer.addClass('ai-message');
-                    appendActions(messageContainer, text);
+                    messageContainer.append(profileImage);
+                    messageContainer.append(messageBody);
                 } else {
+                    messageBody.append(messageContent);
                     messageContainer.addClass('user-message');
+                    messageContainer.append(messageBody);
+                    disableInput();
                 }
 
                 $('#messageList').append(messageContainer);
@@ -180,11 +216,19 @@
                 const assistantId = $('#assistant_id').val();
                 const documentId = $('#document_id').val();
 
+                if (!assistantId || !documentId) {
+                    console.error('assistant_id 또는 document_id가 설정되지 않았습니다.');
+                    appendMessage('assistant_id 또는 document_id가 누락되었습니다.', 'ai');
+                    return;
+                }
+
                 const data = {
                     assistant_id: assistantId,
                     document_id: documentId,
                     question: message
                 };
+
+                // console.log('Sending data:', data);  // 요청 전에 데이터 출력
 
                 fetch(apiBaseUrl, {
                     method: 'POST',
@@ -195,6 +239,7 @@
                     body: JSON.stringify(data),
                 })
                 .then(response => {
+                    // console.log(response);  // 응답 상태 로그
                     if (response.ok) {
                         return response.json();
                     } else {
@@ -202,6 +247,7 @@
                     }
                 })
                 .then(data => {
+                    // console.log(data);  // 응답 데이터 로그
                     if (Array.isArray(data.response)) {
                         appendMessageWithTypingEffect(data.response.join('\n'), 'ai');
                     } else {
@@ -215,62 +261,96 @@
             }
 
             // AI 메시지를 한 글자씩 타이핑 효과로 추가하는 함수
-            function appendMessageWithTypingEffect(text, sender) {
-                const messageContainer = $('<div>', { class: 'message-container ai-message' });
-                const messageContent = $('<div>', { class: 'message-content' }).append($('<p>'));
-                messageContainer.append(messageContent);
-                $('#messageList').append(messageContainer);
+            function appendActions(messageContent) {
+                const likeImg = $('.like-btn').data('like-img');
+                const unlikeImg = $('.unlike-btn').data('unlike-img');
+                const copyImg = $('.copy-btn').data('copy-img');
 
-                const messageElement = messageContent.find('p');
-
-                // 한 글자씩 타이핑
-                typeText(messageElement, text, function() {
-                    // 타이핑이 끝난 후에 액션 버튼 추가
-                    appendActions(messageContainer, text);
-                });
-            }
-
-            // 텍스트를 한 글자씩 출력하는 타이핑 효과 함수
-            function typeText(element, text, callback, index = 0) {
-                // 전체 텍스트에서 한 글자씩 추가
-                if (index < text.length) {
-                    element.text(text.substring(0, index + 1)); // 앞에서부터 index + 1까지 출력
-                    setTimeout(function () {
-                        typeText(element, text, callback, index + 1);
-                    }, 50); // 타이핑 효과 딜레이 (ms 단위)
-                } else {
-                    if (callback) callback(); // 타이핑이 끝나면 콜백 함수 호출
-                }
-            }
-
-            function appendActions(container, text) {
-                // 여기서 이미지 URL 변수를 사용
                 const actionsContainer = $(`
-                    <div>
+                    <div class="actions-wrapper">
                         <hr class="msg-hr">
                         <div class="message-actions">
-                            <button class="action-button">
-                                <img src="${likeImgUrl}" alt="좋아요">
-                            </button>
-                            <button class="action-button">
-                                <img src="${unlikeImgUrl}" alt="싫어요">
-                            </button>
+                            <button class="action-button"><img src="${likeImg}" alt="좋아요"></button>
+                            <button class="action-button"><img src="${unlikeImg}" alt="싫어요"></button>
                             <button class="action-button action-button-cp" onclick="handleCopy(this)">
-                                <img src="${copyImgUrl}" alt="복사">
+                                <img src="${copyImg}" alt="복사">
                             </button>
                         </div>
                     </div>
                 `);
 
-                container.append(actionsContainer);
+                messageContent.append(actionsContainer); // messageContent에 액션 추가
+                enableInput();
             }
+
+            function appendMessageWithTypingEffect(text, sender) {
+                const messageContainer = $('<div>', { class: 'message-container ai-message' });
+                const profileImage = $('<img>', {
+                    src: '{{ assistant.photo.url }}',
+                    alt: 'Assistant Profile',
+                    class: 'profile-image'
+                });
+
+                const messageBody = $('<div>', { class: 'message-body' });
+                const messageContent = $('<div>', { class: 'message-content' }).append($('<p>'));
+                messageBody.append(messageContent);
+                messageContainer.append(profileImage);
+                messageContainer.append(messageBody);
+                $('#messageList').append(messageContainer);
+
+                const messageElement = messageContent.find('p');
+
+                // Pass the callback to typeText
+                typeText(messageElement, text, function() {
+                    // Actions to perform after typing is complete
+                    appendActions(messageContent);
+                });
+            }
+
+            // 텍스트를 한 글자씩 출력하는 타이핑 효과 함수
+            function typeText(element, text, callback, index = 0) {
+                if (index < text.length) {
+                    element.text(element.text() + text.charAt(index));
+
+                    if (!isUserScrollingUp) {
+                        scrollToBottom();
+                    }
+
+                    setTimeout(function () {
+                        typeText(element, text, callback, index + 1);
+                    }, 50);
+                } else {
+                    if (callback) callback();
+                }
+            }
+
+            // 스크롤을 맨 아래로 이동시키는 함수
+            function scrollToBottom() {
+                if (!isUserScrollingUp) {
+                    const chatContainer = $('#chatContainer');
+                    chatContainer.scrollTop(chatContainer.prop('scrollHeight'));
+                }
+            }
+
+            $('#chatContainer').on('scroll', function () {
+                const chatContainer = $(this);
+                const scrollTop = chatContainer.scrollTop();
+                const scrollHeight = chatContainer.prop('scrollHeight');
+                const clientHeight = chatContainer.prop('clientHeight');
+
+                if (scrollTop + clientHeight >= scrollHeight) {
+                    isUserScrollingUp = false;
+                } else {
+                    isUserScrollingUp = true;
+                }
+            });
 
             window.handleCopy = function (button) {
                 const messageText = $(button).closest('.message-container').find('.message-content p').text();
 
                 if (messageText) {
                     navigator.clipboard.writeText(messageText).then(() => {
-                        console.log("Text copied to clipboard:", messageText);
+                        // console.log("Text copied to clipboard:", messageText);
                     }).catch(err => {
                         console.error('복사 오류:', err);
                     });

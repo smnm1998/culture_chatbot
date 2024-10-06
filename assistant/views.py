@@ -182,58 +182,6 @@ class ChatbotAPIView(APIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-# # GPT-4 실시간 스트림 응답 처리
-# def gpt_response_stream(request, id):
-#     assistant = get_object_or_404(Assistant, id=id)
-#     assistant_id = assistant.assistant_variable  # MySQL에서 저장된 어시스턴트 변수 가져오기
-#
-#     print(f"Assistant ID: {assistant_id}")  # 어시스턴트 ID 출력
-#
-#     question = request.GET.get('question', '').strip()
-#     print(f"Received question: {question}")  # 사용자 질문 출력
-#
-#     def stream():
-#         if question:
-#             try:
-#                 print("Calling OpenAI API...")  # OpenAI API 호출 전 출력
-#                 # OpenAI API를 통해 어시스턴트 호출
-#
-#                 system_message = (
-#                     f"당신은 {assistant.name} 입니다. "
-#                     f"만약 사용자가 당신이 누구인지 묻는다면, 인공지능이라고 하지 말고, 주제에 맞는 역할로 답해주세요. "
-#                     f"예를 들어, 당신이 역사적 인물이라면 그 인물의 말투와 성격에 맞추어 답변을 제공하세요. "
-#                     f"상황에 따라 겸손하거나 진중한 말투로 이야기하며, 적절히 예의를 갖추어 답변하세요."
-#                 )
-#
-#                 # OpenAI API를 통해 어시스턴트 호출
-#                 response = openai.ChatCompletion.create(
-#                     model="gpt-4",
-#                     messages=[
-#                         {"role": "system", "content": system_message},
-#                         {"role": "user", "content": question},
-#                     ],
-#                     stream=True
-#                 )
-#                 print("API call successful")  # API 호출 성공 시 출력
-#
-#                 for chunk in response:
-#                     chunk_message = chunk['choices'][0]['delta'].get('content', '')
-#                     if chunk_message:
-#                         print(f"Chunk message: {chunk_message}")  # 받아온 chunk 메시지 출력
-#                         for char in chunk_message:
-#                             yield f"data: {char}\n\n"
-#                             time.sleep(0.05)
-#                 yield 'event: DONE\ndata: \n\n'
-#             except openai.OpenAIError as e:
-#                 print(f"OpenAI Error: {e}")  # 오류 발생 시 오류 내용 출력
-#                 yield f"data: Error: {str(e)}\n\n"
-#         else:
-#             print("No question provided")  # 질문이 없을 경우 출력
-#             yield 'data: No question provided\n\n'
-#
-#     return StreamingHttpResponse(stream(), content_type='text/event-stream')
-
 # 세 번째 페이지: 지역 선택 페이지
 def thema_view(request):
     return render(request, 'thema.html')
@@ -248,6 +196,16 @@ def independence_view(request):
         assistants_by_description[description] = Assistant.objects.filter(description=description)
 
     return render(request, 'independence.html', {'assistants_by_description': assistants_by_description})
+
+def sommelier_view(request):
+    descriptions = ["트랜디한 전통주 와이너리", "막걸리로 즐기는 전통주", "역사가 담긴 한 잔, 안동소주", "파티와 함께하는 이색 전통주"]
+    assistants_by_description = {}
+
+    # 각 description에 맞는 어시스턴트 데이터를 갖옴
+    for description in descriptions:
+        assistants_by_description[description] = Assistant.objects.filter(description=description)
+
+    return render(request, 'sommelier.html', {'assistants_by_description': assistants_by_description})
 
 def search_results_view(request):
     query = request.GET.get('query')

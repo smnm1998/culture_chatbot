@@ -7,6 +7,7 @@ from .views import (
     chatbot_view,
     thema_view,
     independence_view,
+    sommelier_view,
     search_results_view,
     AssistantListView,
     ChatbotAPIView,
@@ -18,8 +19,8 @@ urlpatterns = [
     path('chatbot/<int:id>/', chatbot_view, name='chatbot'),
     path('thema/', thema_view, name='thema-select'),
     path('independence/', independence_view, name='independence-select'),
+    path('sommelier/', sommelier_view, name='sommelier-select'),
     path('search/', search_results_view, name='search-results'),  # 검색 결과 페이지
-
 
     path('api/assistants/', AssistantListView.as_view(), name='assistant-list'),
     path('api/chatbot/<int:id>/', ChatbotAPIView.as_view(), name='chatbot-api'),  # 새로운 챗봇 API

@@ -156,6 +156,33 @@
                     city_county_town: selectedCity
                 },
 
+                // success: function(response) {
+                //     if (response.length === 0) {
+                //         $('#assistantList').append('<p>해당 지역에 어시스턴트가 없습니다.</p>');
+                //     } else {
+                //         response.forEach(function(assistant) {
+                //             console.log(assistant);  // 확인을 위해 추가
+                //
+                //             // 도시, 도 정보가 존재하는지 확인 후 추가
+                //             const city_name = assistant.city_county_town ? assistant.city_county_town.name : '정보 없음';
+                //             const province_name = assistant.province ? assistant.province.name : '정보 없음';
+                //
+                //             // 중복되는 텍스트 출력 방지하고, 어시스턴트 정보만 출력
+                //             $('#assistantList').append(`
+                //                 <div class="photo-item">
+                //                     <a href="/chatbot/${assistant.id}/" onclick="setArrayIndex(1)">
+                //                         <img src="${assistant.photo}" alt="${assistant.name}">
+                //                         <p class="photo-title">${assistant.name}</p>
+                //                         <p class="photo-address"> ${province_name}, ${city_name}, ${assistant.country}</p>
+                //                     </a>
+                //                 </div>
+                //             `);
+                //
+                //
+                //         });
+                //     }
+                // },
+
                 success: function(response) {
                     if (response.length === 0) {
                         $('#assistantList').append('<p>해당 지역에 어시스턴트가 없습니다.</p>');
@@ -167,19 +194,32 @@
                             const city_name = assistant.city_county_town ? assistant.city_county_town.name : '정보 없음';
                             const province_name = assistant.province ? assistant.province.name : '정보 없음';
 
-                            // 중복되는 텍스트 출력 방지하고, 어시스턴트 정보만 출력
+                            // 태그 리스트 생성
+                            let tagsHtml = '';
+                            if (assistant.tags && assistant.tags.length > 0) {
+                                // 태그를 우선순위(priority)로 정렬
+                                assistant.tags.sort((a, b) => a.priority - b.priority);
+                                assistant.tags.forEach(tag => {
+                                    tagsHtml += `#${tag.name} `;
+                                });
+                            }
+
+                            // 어시스턴트 정보 출력
                             $('#assistantList').append(`
                                 <div class="photo-item">
                                     <a href="/chatbot/${assistant.id}/" onclick="setArrayIndex(1)">
                                         <img src="${assistant.photo}" alt="${assistant.name}">
                                         <p class="photo-title">${assistant.name}</p>
-                                        <p class="photo-address"> ${province_name}, ${city_name}, ${assistant.country}</p>
+<!--                                        <p class="photo-address"> ${province_name}, ${city_name}, ${assistant.country}</p>-->
+                                        <p class="photo-address">${tagsHtml}</p>
                                     </a>
                                 </div>
                             `);
                         });
                     }
                 },
+
+
                 error: function(error) {
                     console.error('Error fetching assistants:', error);
                 }

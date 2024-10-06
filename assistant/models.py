@@ -13,6 +13,14 @@ class CityCountyTown(models.Model):
     def __str__(self):
         return f"{self.province.name} - {self.name}"
 
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    priority = models.IntegerField(default=0)  # 우선순위를 저장하는 필드 추가
+
+    def __str__(self):
+        return self.name
+
+
 class Assistant(models.Model):
     assistant_id = models.CharField(max_length=255, unique=True, null=False, default='default_assistant_id')  # 어시스턴트 아이디
     name = models.CharField(max_length=255)  # 어시스턴트 이름
@@ -23,6 +31,8 @@ class Assistant(models.Model):
     city_county_town = models.ForeignKey('CityCountyTown', on_delete=models.CASCADE)  # 시군읍 정보
     document_id = models.CharField(max_length=255, null=True, blank=True)  # 문서 ID를 저장하는 필드 추가
 
+    # 해시태그 필드 추가
+    tags = models.ManyToManyField(Tag, related_name='assistants', blank=True)  # 어시스턴트 해시태그
 
     # welcome message
     welcome_message = models.TextField(default='환영합니다! 무엇을 도와드릴까요?')  # Store a single welcome message

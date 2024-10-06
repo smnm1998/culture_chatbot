@@ -14,7 +14,8 @@ from .views import (
     )
 
 urlpatterns = [
-    path('', main_view, name='main-select'),  # 첫 번째 페이지: 추천을 해주는 메인 페이지
+    path('', main_view, name='main-select'),
+    path('lounge/', main_view, name='main-select'),  # 첫 번째 페이지: 추천을 해주는 메인 페이지
     path('local/', local_view, name='local-select'),  # 두 번째 페이지: 지역 선택 후 어시스턴트 연결 페이지
     path('chatbot/<int:id>/', chatbot_view, name='chatbot'),
     path('thema/', thema_view, name='thema-select'),

@@ -126,52 +126,44 @@ class ChatbotAPIView(APIView):
         logger.debug(f"Request Data: {request.data}")
 
         # assistant_id와 document_id는 DB에서 가져옴
+        assistant = get_object_or_404(Assistant, id=id)
         assistant_id = request.data.get('assistant_id')
         document_id = request.data.get('document_id')
         question = request.data.get('question')
 
-        # 세션에서 스레드 ID 가져오기 (없을 경우 첫 질문이므로 새로 생성)
-        thread_id = request.session.get('thread_id')
 
-        # 첫 질문일 경우 새로운 스레드 생성
-        if not thread_id:
-            try:
-                thread = client.beta.threads.create(
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": question,
-                            "attachments": [
-                                {"file_id": document_id, "tools": [{"type": "file_search"}]}
-                            ]
-                        }
-                    ]
-                )
-                request.session['thread_id'] = thread.id
-                thread_id = thread.id  # 이후 질문에서 사용
-
-            except Exception as e:
-                logger.error(f"Error creating new thread: {str(e)}")
-                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-        # 기존 스레드로 질문을 이어서 보냄 (대화의 맥락 유지)
+        # 기존 스레드를 사용하지 않고, 항상 새로운 스레드를 생성
         try:
+            thread = client.beta.threads.create(
+                messages=[
+                    {
+                        "role": "user",
+                        "content": question,
+                        "attachments": [
+                            {"file_id": document_id, "tools": [{"type": "file_search"}]}
+                        ]
+                    }
+                ],
+            )
+            thread_id = thread.id  # 새로 생성된 스레드 ID 저장
+
             event_handler = EventHandler()
             with client.beta.threads.runs.stream(
                     thread_id=thread_id,
                     assistant_id=assistant_id,
                     instructions=f"""
-                        첨부된 파일에서 "{question}"에 대한 답변을 찾아서 제공하세요. 
-                        질문과 관련된 파일의 정보를 바탕으로 정확한 답변을 제공하세요. 
-                        불필요한 정보는 생략하고, 질문에 맞는 관련 정보만 제공하세요.
-                        첨부된 파일 안의 정보를 통해서, 그 인물처럼 텍스트를 출력하세요.
-                        첨부된 파일의 말투를 사용해서, 최대한 비슷하게 흉내내세요.
-                        첨부된 파일로 질문의 답을 할 수 없을 때는 실시간 정보를 이용하세요.
-                        
+                    당신은 '{assistant.name}'입니다.
+                    - 사람과 대화하듯이 억양을 질문에 대한 답변을 해주세요. 특히 '{assistant.name}'이 사람일 경우 그 인물의 성격을 이용하여 답변해주세요.
+                    - 첨부된 파일에는 '{assistant.name}'와 관련된 여러 질문(Qn)과 답변(An)이 포함되어 있습니다.
+                    - 사용자의 질문과 일치하거나 가장 유사한 질문을 찾아서 그에 대응하는 답변을 정확히 제공합니다.
+                    - 이전의 맥락을 무시하고, 파일에 있는 정보만을 바탕으로 답변하세요.
                     """,
                     event_handler=event_handler,
             ) as stream:
                 stream.until_done()
+
+            # 스레드 사용 후 자동 삭제
+            client.beta.threads.delete(thread_id)
 
             logger.debug(f"Responses collected: {event_handler.responses}")
 

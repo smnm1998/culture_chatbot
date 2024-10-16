@@ -16,7 +16,6 @@ import re
 import logging
 logger = logging.getLogger(__name__)
 
-
 # -------------------------------------------------------------
 # 첫 번째 페이지: 추천 페이지
 def main_view(request):
@@ -59,7 +58,55 @@ class AssistantListView(generics.ListAPIView):
         if province_name and city_name:
             return Assistant.objects.filter(city_county_town__name=city_name, city_county_town__province__name=province_name)
         return Assistant.objects.none()
-# -------------------------------------------------------------
+# -------------------------------------------------------------------------------------------------------------------
+# 세 번째 페이지: 지역 선택 페이지
+def thema_view(request):
+    return render(request, 'thema.html')
+
+# -------------------------------------------------------------------------------------------------------------------
+# 세 번째 페이지: 독립 선택 페이지
+def independence_view(request):
+    descriptions = ["문학으로 아픔을 풀어낸 독립운동가", "전장을 누볐던 무장 독립투사", "항일의 빛, 계몽의 사자"]
+    assistants_by_description = {}
+
+    # 각 description에 맞는 어시스턴트 데이터를 가져옴
+    for description in descriptions:
+        assistants_by_description[description] = Assistant.objects.filter(description=description)
+
+    return render(request, 'independence.html', {'assistants_by_description': assistants_by_description})
+
+# -------------------------------------------------------------------------------------------------------------------
+# 네 번째 페이지: 독립 선택 페이지
+def sommelier_view(request):
+    descriptions = ["트랜디한 전통주 와이너리", "막걸리로 즐기는 전통주", "역사가 담긴 한 잔, 안동소주", "파티와 함께하는 이색 전통주"]
+    assistants_by_description = {}
+
+    # 각 description에 맞는 어시스턴트 데이터를 갖옴
+    for description in descriptions:
+        assistants_by_description[description] = Assistant.objects.filter(description=description)
+
+    return render(request, 'sommelier.html', {'assistants_by_description': assistants_by_description})
+
+# -------------------------------------------------------------------------------------------------------------------
+# 다섯 번째 페이지: 독립 선택 페이지
+def lounge_view(request):
+    descriptions = ["Hahoe Village, curved like a lotus flower", "Dosanseowon, a place of Joseon wisdom", "Byeongsan Seowon, like a beautiful folding screen", "Sad love in the moonlight", "Enjoy a fun round of mask dance in Andong"]
+    assistants_by_description = {}
+
+    # 각 description에 맞는 어시스턴트 데이터를 갖옴
+    for description in descriptions:
+        assistants_by_description[description] = Assistant.objects.filter(description=description)
+
+    return render(request, 'lounge.html', {'assistants_by_description': assistants_by_description})
+
+# -------------------------------------------------------------------------------------------------------------------
+# 검색 페이지
+def search_results_view(request):
+    query = request.GET.get('query')
+    results = Assistant.objects.filter(name__icontains=query)  # 이름 기준으로 검색
+    return render(request, 'search_results.html', {'query': query, 'results': results})
+
+# -------------------------------------------------------------------------------------------------------------------
 # 챗봇 페이지 렌더링
 def chatbot_view(request, id):
     # 새로운 어시스턴트로 이동할 때 세션에서 스레드 ID 삭제
@@ -96,6 +143,44 @@ def chatbot_view(request, id):
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# -------------------------------------------------------------------------------------------------------------------
+# 챗봇 페이지 렌더링
+def lounge_chatbot_view(request, id):
+    # 새로운 어시스턴트로 이동할 때 세션에서 스레드 ID 삭제
+    request.session.pop('thread_id', None)
+
+    assistant = get_object_or_404(Assistant, id=id)
+
+    # 질문을 리스트로 준비
+    questions = [
+        assistant.question_1,
+        assistant.question_2,
+        assistant.question_3,
+        assistant.question_4,
+        assistant.question_5,
+        assistant.question_6,
+        assistant.question_7,
+        assistant.question_8,
+        assistant.question_9,
+        assistant.question_10,
+    ]
+
+    questions = [q for q in questions if q]  # None 값 제외
+
+    return render(request, 'lounge_chatbot.html', {
+        'assistant': assistant,
+        'id': assistant.id,
+        'assistant_id': assistant.assistant_id,
+        'document_id': assistant.document_id,
+        'assistant_name': assistant.name,
+        'questions': questions,
+        'welcome_message': assistant.welcome_message
+    })
+
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# -------------------------------------------------------------------------------------------------------------------
 # 응답 처리 시 메타데이터 제거
 def clean_response(text):
     return re.sub(r'【.*?】', '', text).strip()
@@ -173,44 +258,3 @@ class ChatbotAPIView(APIView):
             logger.error(f"Error processing request: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
-# 세 번째 페이지: 지역 선택 페이지
-def thema_view(request):
-    return render(request, 'thema.html')
-
-# 세 번째 페이지: 독립 선택 페이지
-def independence_view(request):
-    descriptions = ["문학으로 아픔을 풀어낸 독립운동가", "전장을 누볐던 무장 독립투사", "항일의 빛, 계몽의 사자"]
-    assistants_by_description = {}
-
-    # 각 description에 맞는 어시스턴트 데이터를 가져옴
-    for description in descriptions:
-        assistants_by_description[description] = Assistant.objects.filter(description=description)
-
-    return render(request, 'independence.html', {'assistants_by_description': assistants_by_description})
-
-def sommelier_view(request):
-    descriptions = ["트랜디한 전통주 와이너리", "막걸리로 즐기는 전통주", "역사가 담긴 한 잔, 안동소주", "파티와 함께하는 이색 전통주"]
-    assistants_by_description = {}
-
-    # 각 description에 맞는 어시스턴트 데이터를 갖옴
-    for description in descriptions:
-        assistants_by_description[description] = Assistant.objects.filter(description=description)
-
-    return render(request, 'sommelier.html', {'assistants_by_description': assistants_by_description})
-
-def lounge_view(request):
-    descriptions = ["Hahoe Village, curved like a lotus flower", "Dosanseowon, a place of Joseon wisdom", "Byeongsan Seowon, like a beautiful folding screen", "Sad love in the moonlight", "Enjoy a fun round of mask dance in Andong"]
-    assistants_by_description = {}
-
-    # 각 description에 맞는 어시스턴트 데이터를 갖옴
-    for description in descriptions:
-        assistants_by_description[description] = Assistant.objects.filter(description=description)
-
-    return render(request, 'lounge.html', {'assistants_by_description': assistants_by_description})
-
-
-def search_results_view(request):
-    query = request.GET.get('query')
-    results = Assistant.objects.filter(name__icontains=query)  # 이름 기준으로 검색
-    return render(request, 'search_results.html', {'query': query, 'results': results})

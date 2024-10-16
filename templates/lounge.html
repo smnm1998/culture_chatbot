@@ -40,7 +40,7 @@
                     <div class="swiper-wrapper">
                         {% for assistant in assistants %}
                             <div class="swiper-slide tour-item">
-                                <a href="/chatbot/{{ assistant.id }}/" onclick="setArrayIndex(2)" class="chatbot-link" style=" text-decoration: none; color: inherit;">
+                                <a href="/lounge_chatbot/{{ assistant.id }}/" onclick="setArrayIndex(2)" class="chatbot-link" style=" text-decoration: none; color: inherit;">
                                     <img src="{{ assistant.photo.url }}" alt="{{ assistant.name }}">
                                     <p class="tour-title">{{ assistant.name }}</p>
                                     <p class="tour-address">

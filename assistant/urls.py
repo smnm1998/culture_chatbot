@@ -9,6 +9,7 @@ from .views import (
     independence_view,
     sommelier_view,
     lounge_view,
+    lounge_chatbot_view,
     search_results_view,
     AssistantListView,
     ChatbotAPIView,
@@ -22,7 +23,10 @@ urlpatterns = [
     path('thema/', thema_view, name='thema-select'),
     path('independence/', independence_view, name='independence-select'),
     path('sommelier/', sommelier_view, name='sommelier-select'),
+
+
     path('lounge/', lounge_view, name='lounge-select'),  # 라운지페이지
+    path('lounge_chatbot/<int:id>/', lounge_chatbot_view, name='chatbot'),
 
     path('search/', search_results_view, name='search-results'),  # 검색 결과 페이지
 

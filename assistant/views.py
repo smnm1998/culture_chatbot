@@ -199,6 +199,17 @@ def sommelier_view(request):
 
     return render(request, 'sommelier.html', {'assistants_by_description': assistants_by_description})
 
+def lounge_view(request):
+    descriptions = ["Hahoe Village, curved like a lotus flower", "Dosanseowon, a place of Joseon wisdom", "Byeongsan Seowon, like a beautiful folding screen", "Sad love in the moonlight", "Enjoy a fun round of mask dance in Andong"]
+    assistants_by_description = {}
+
+    # 각 description에 맞는 어시스턴트 데이터를 갖옴
+    for description in descriptions:
+        assistants_by_description[description] = Assistant.objects.filter(description=description)
+
+    return render(request, 'lounge.html', {'assistants_by_description': assistants_by_description})
+
+
 def search_results_view(request):
     query = request.GET.get('query')
     results = Assistant.objects.filter(name__icontains=query)  # 이름 기준으로 검색

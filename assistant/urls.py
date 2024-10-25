@@ -11,6 +11,7 @@ from .views import (
     lounge_view,
     lounge_chatbot_view,
     search_results_view,
+    memorium_chatbot_view,
     AssistantListView,
     ChatbotAPIView,
     )
@@ -29,6 +30,8 @@ urlpatterns = [
     path('lounge_chatbot/<int:id>/', lounge_chatbot_view, name='chatbot'),
 
     path('search/', search_results_view, name='search-results'),  # 검색 결과 페이지
+
+    path('memorium/<int:id>/', memorium_chatbot_view, name='chatbot'),
 
     path('api/assistants/', AssistantListView.as_view(), name='assistant-list'),
     path('api/chatbot/<int:id>/', ChatbotAPIView.as_view(), name='chatbot-api'),  # 새로운 챗봇 API

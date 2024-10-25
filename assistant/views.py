@@ -181,6 +181,42 @@ def lounge_chatbot_view(request, id):
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # -------------------------------------------------------------------------------------------------------------------
+# 메모리움 페이지 렌더링
+def memorium_chatbot_view(request, id):
+    # 새로운 어시스턴트로 이동할 때 세션에서 스레드 ID 삭제
+    request.session.pop('thread_id', None)
+
+    assistant = get_object_or_404(Assistant, id=id)
+
+    # 질문을 리스트로 준비
+    questions = [
+        assistant.question_1,
+        assistant.question_2,
+        assistant.question_3,
+        assistant.question_4,
+        assistant.question_5,
+        assistant.question_6,
+        assistant.question_7,
+        assistant.question_8,
+        assistant.question_9,
+        assistant.question_10,
+    ]
+
+    questions = [q for q in questions if q]  # None 값 제외
+
+    return render(request, 'memorium_chatbot.html', {
+        'assistant': assistant,
+        'id': assistant.id,
+        'assistant_id': assistant.assistant_id,
+        'document_id': assistant.document_id,
+        'assistant_name': assistant.name,
+        'questions': questions,
+        'welcome_message': assistant.welcome_message
+    })
+
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# -------------------------------------------------------------------------------------------------------------------
 # 응답 처리 시 메타데이터 제거
 def clean_response(text):
     return re.sub(r'【.*?】', '', text).strip()

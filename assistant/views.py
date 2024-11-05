@@ -59,14 +59,14 @@ class AssistantListView(generics.ListAPIView):
             return Assistant.objects.filter(city_county_town__name=city_name, city_county_town__province__name=province_name)
         return Assistant.objects.none()
 # -------------------------------------------------------------------------------------------------------------------
-# 세 번째 페이지: 지역 선택 페이지
+# 숨겨진 페이지
 def thema_view(request):
     return render(request, 'thema.html')
 
 # -------------------------------------------------------------------------------------------------------------------
 # 세 번째 페이지: 독립 선택 페이지
 def independence_view(request):
-    descriptions = ["문학으로 아픔을 풀어낸 독립운동가", "전장을 누볐던 무장 독립투사", "항일의 빛, 계몽의 사자"]
+    descriptions = ["보드게임 룰이 궁금하시나요?", "문학으로 아픔을 풀어낸 독립운동가", "전장을 누볐던 무장 독립투사", "항일의 빛, 계몽의 사자"]
     assistants_by_description = {}
 
     # 각 description에 맞는 어시스턴트 데이터를 가져옴

@@ -6,11 +6,11 @@
 
 ## 주요 화면
 ### 1. 메인 페이지 및 주요 콘텐츠
-<div style="display: flex; justify-content: space-around;">
-  <img src="./portfolio_images/main_page.png" alt="메인 페이지" style="width: 30%; height: auto;">
-  <img src="./portfolio_images/local_page.png" alt="지역별 페이지" style="width: 30%; height: auto;">
-  <img src="./portfolio_images/independence_page.png" alt="독립운동 페이지" style="width: 30%; height: auto;">
-  <img src="./portfolio_images/sommelier_page.png" alt="소믈리에 페이지" style="width: 30%; height: auto;">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+  <img src="./portfolio_images/main_page.png" alt="메인 페이지" style="width: 22%; height: auto;">
+  <img src="./portfolio_images/local_page.png" alt="지역별 페이지" style="width: 22%; height: auto;">
+  <img src="./portfolio_images/independence_page.png" alt="독립운동 페이지" style="width: 22%; height: auto;">
+  <img src="./portfolio_images/sommelier_page.png" alt="소믈리에 페이지" style="width: 22%; height: auto;">
 </div>
 - 메인 페이지에서 추천 콘텐츠를 확인할 수 있으며, 지역별, 독립운동, 소믈리에 페이지를 통해 다양한 주제별 정보를 탐색할 수 있습니다.
 

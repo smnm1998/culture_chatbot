@@ -113,10 +113,7 @@ python manage.py runserver
    ```
 5. Pull Request를 생성합니다.
 
-## 라이선스
-이 프로젝트는 [MIT 라이선스](LICENSE)에 따라 배포됩니다.
 
----
 
 ### 문의
 프로젝트와 관련된 문의 사항은 [jhs789654123@gmail.com]로 연락주세요.

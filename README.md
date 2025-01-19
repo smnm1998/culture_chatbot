@@ -23,7 +23,6 @@
 ### 3. 관리자 페이지
 <div style="display: flex; justify-content: space-around;">
   <img src="./portfolio_images/admin_page1.png" alt="관리자 페이지 1" style="width: 30%; height: auto;">
-  <img src="./portfolio_images/admin_page2.png" alt="관리자 페이지 2" style="width: 30%; height: auto;">
   <img src="./portfolio_images/admin_page3.png" alt="관리자 페이지 3" style="width: 30%; height: auto;">
 </div>
 - 관리자 모드에서는 지역, 카테고리, 콘텐츠 데이터를 효율적으로 관리할 수 있습니다.

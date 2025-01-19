@@ -6,12 +6,18 @@
 
 ## 주요 화면
 ### 메인 페이지
-![메인 페이지](./portfolio_images/main_page.png)
+<div style='width:50%;'>![메인 페이지](./portfolio_images/main_page.png)</div>
 - 지역별 추천 콘텐츠를 메인 화면에서 확인 가능하며, 직관적인 UI를 통해 원하는 지역과 주제를 탐색할 수 있습니다.
 
 ### 소믈리에 페이지
 ![소믈리에 페이지](./portfolio_images/sommelier_page.png)
 - 전통주와 관련된 정보를 제공하며, 사용자 맞춤 추천 서비스를 통해 관심 있는 주제를 더욱 깊이 탐색할 수 있습니다.
+
+### 관리자 페이지
+![관리자 페이지 1](./portfolio_images/admin_page1.png)
+![관리자 페이지 2](./portfolio_images/admin_page2.png)
+![관리자 페이지 3](./portfolio_images/admin_page3.png)
+- 관리자 모드에서는 지역, 카테고리, 콘텐츠 데이터를 효율적으로 관리할 수 있습니다.
 
 ### 채팅 페이지
 ![채팅 페이지](./portfolio_images/chatting_page.png)
@@ -24,13 +30,6 @@
 ### 지역별 페이지
 ![지역별 페이지](./portfolio_images/local_page.png)
 - 특정 지역에 대한 상세 정보 및 추천 콘텐츠를 제공합니다.
-
-### 관리자 페이지
-![관리자 페이지 1](./portfolio_images/admin_page1.png)
-![관리자 페이지 2](./portfolio_images/admin_page2.png)
-![관리자 페이지 3](./portfolio_images/admin_page3.png)
-- 관리자 모드에서는 지역, 카테고리, 콘텐츠 데이터를 효율적으로 관리할 수 있습니다.
-
 
 ## 주요 기능
 1. **지역문화 정보 제공**

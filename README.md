@@ -7,7 +7,7 @@
 ## 주요 화면
 ### 1. 메인 페이지 및 주요 콘텐츠
 <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-  <img src="./portfolio_images/main_page.png" alt="메인 페이지" style="width: 22%; height: 200px; object-fit: cover;">
+  <img src="./portfolio_images/main_page.png" alt="메인 페이지" style="width: 22%; height: auto; object-fit: cover;">
   <img src="./portfolio_images/local_page.png" alt="지역별 페이지" style="width: 22%; height: auto;">
   <img src="./portfolio_images/independence_page.png" alt="독립운동 페이지" style="width: 22%; height: auto;">
   <img src="./portfolio_images/sommelier_page.png" alt="소믈리에 페이지" style="width: 22%; height: auto;">
@@ -16,14 +16,13 @@
 
 ### 2. 채팅 페이지
 <div style="display: flex; justify-content: center;">
-  <img src="./portfolio_images/chatting_page.png" alt="채팅 페이지" style="width: 30%; height: 200px; object-fit: cover;">
+  <img src="./portfolio_images/chatting_page.png" alt="채팅 페이지" style="width: 30%; height: auto; object-fit: cover;">
 </div>
 - 사용자와 챗봇 간의 대화 화면으로, 지역문화 관련 질문에 빠르고 정확한 답변을 제공합니다.
 
 ### 3. 관리자 페이지
 <div style="display: flex; justify-content: space-around;">
   <img src="./portfolio_images/admin_page1.png" alt="관리자 페이지 1" style="width: 30%; height: auto;">
-  <img src="./portfolio_images/admin_page2.png" alt="관리자 페이지 2" style="width: 30%; height: auto;">
   <img src="./portfolio_images/admin_page3.png" alt="관리자 페이지 3" style="width: 30%; height: auto;">
 </div>
 - 관리자 모드에서는 지역, 카테고리, 콘텐츠 데이터를 효율적으로 관리할 수 있습니다.

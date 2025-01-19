@@ -5,31 +5,28 @@
 주요 목표는 사용자가 간단한 대화형 인터페이스를 통해 다양한 지역문화를 탐색하고, 깊이 있는 정보를 제공받을 수 있도록 하는 것입니다. OpenAI API를 활용하여 자연어 처리 기술을 적용하였으며, 웹과 모바일 사용자 모두에게 최적화된 인터페이스를 제공합니다.
 
 ## 주요 화면
-### 메인 페이지
-<div style='width:50%;'>![메인 페이지](./portfolio_images/main_page.png)</div>
-- 지역별 추천 콘텐츠를 메인 화면에서 확인 가능하며, 직관적인 UI를 통해 원하는 지역과 주제를 탐색할 수 있습니다.
+### 1. 메인 페이지 및 주요 콘텐츠
+<div style="display: flex; justify-content: space-around;">
+  <img src="./portfolio_images/main_page.png" alt="메인 페이지" style="width: 30%; height: auto;">
+  <img src="./portfolio_images/local_page.png" alt="지역별 페이지" style="width: 30%; height: auto;">
+  <img src="./portfolio_images/independence_page.png" alt="독립운동 페이지" style="width: 30%; height: auto;">
+  <img src="./portfolio_images/sommelier_page.png" alt="소믈리에 페이지" style="width: 30%; height: auto;">
+</div>
+- 메인 페이지에서 추천 콘텐츠를 확인할 수 있으며, 지역별, 독립운동, 소믈리에 페이지를 통해 다양한 주제별 정보를 탐색할 수 있습니다.
 
-### 소믈리에 페이지
-![소믈리에 페이지](./portfolio_images/sommelier_page.png)
-- 전통주와 관련된 정보를 제공하며, 사용자 맞춤 추천 서비스를 통해 관심 있는 주제를 더욱 깊이 탐색할 수 있습니다.
+### 2. 채팅 페이지
+<div style="display: flex; justify-content: center;">
+  <img src="./portfolio_images/chatting_page.png" alt="채팅 페이지" style="width: 30%; height: auto;">
+</div>
+- 사용자와 챗봇 간의 대화 화면으로, 지역문화 관련 질문에 빠르고 정확한 답변을 제공합니다.
 
-### 관리자 페이지
-![관리자 페이지 1](./portfolio_images/admin_page1.png)
-![관리자 페이지 2](./portfolio_images/admin_page2.png)
-![관리자 페이지 3](./portfolio_images/admin_page3.png)
+### 3. 관리자 페이지
+<div style="display: flex; justify-content: space-around;">
+  <img src="./portfolio_images/admin_page1.png" alt="관리자 페이지 1" style="width: 30%; height: auto;">
+  <img src="./portfolio_images/admin_page2.png" alt="관리자 페이지 2" style="width: 30%; height: auto;">
+  <img src="./portfolio_images/admin_page3.png" alt="관리자 페이지 3" style="width: 30%; height: auto;">
+</div>
 - 관리자 모드에서는 지역, 카테고리, 콘텐츠 데이터를 효율적으로 관리할 수 있습니다.
-
-### 채팅 페이지
-![채팅 페이지](./portfolio_images/chatting_page.png)
-- 사용자와 챗봇 간의 대화 화면으로, 지역 문화와 관련된 질문에 빠르고 정확한 답변을 제공합니다.
-
-### 독립운동 페이지
-![독립운동 페이지](./portfolio_images/independence_page.png)
-- 독립운동과 관련된 역사적 인물 및 사건 정보를 제공하며, 사용자 학습을 돕습니다.
-
-### 지역별 페이지
-![지역별 페이지](./portfolio_images/local_page.png)
-- 특정 지역에 대한 상세 정보 및 추천 콘텐츠를 제공합니다.
 
 ## 주요 기능
 1. **지역문화 정보 제공**
@@ -112,8 +109,6 @@ python manage.py runserver
    git push origin feature/새로운기능
    ```
 5. Pull Request를 생성합니다.
-
-
 
 ### 문의
 프로젝트와 관련된 문의 사항은 [jhs789654123@gmail.com]로 연락주세요.

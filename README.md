@@ -52,7 +52,7 @@
     </td>
     <td>
       <p align="center">
-        <img src="./portfolio_images/chatting_page.png" alt="채팅 페이지" width="40%">
+        <img src="./portfolio_images/chatting_page.png" alt="채팅 페이지" width="30%">
       </p>
       <p><b>채팅 페이지</b><br>챗봇과 대화하며 원하는 정보를 빠르게 얻을 수 있습니다.</p>
     </td>

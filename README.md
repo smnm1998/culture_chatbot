@@ -54,8 +54,7 @@
   </tr>
 </table>
 
----
-### 3. 관리자 페이지
+### 관리자 페이지
 <table style="width:100%; text-align:center;">
   <tr>
     <td>

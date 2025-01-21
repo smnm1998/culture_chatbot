@@ -61,11 +61,25 @@
 
 ---
 ### 3. 관리자 페이지
-<div style="display: flex; justify-content: space-around;">
-  <img src="./portfolio_images/admin_page1.png" alt="관리자 페이지 1" style="width: 20%; height: auto;">
-  <img src="./portfolio_images/admin_page3.png" alt="관리자 페이지 3" style="width: 20%; height: auto;">
-</div>
+<table style="width:100%; text-align:center;">
+  <tr>
+    <td>
+      <p align="center">
+        <img src="./portfolio_images/admin_page1.png" alt="관리자 페이지 1" width="40%">
+      </p>
+      <p><b>관리자 페이지 1</b><br>데이터 관리 및 콘텐츠 추가 기능 제공.</p>
+    </td>
+    <td>
+      <p align="center">
+        <img src="./portfolio_images/admin_page3.png" alt="관리자 페이지 3" width="40%">
+      </p>
+      <p><b>관리자 페이지 3</b><br>효율적인 데이터베이스 관리 화면.</p>
+    </td>
+  </tr>
+</table>
 - 관리자 모드에서는 지역, 카테고리, 콘텐츠 데이터를 효율적으로 관리할 수 있습니다.
+
+---
 
 ## 주요 기능
 

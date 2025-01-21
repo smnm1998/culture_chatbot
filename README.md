@@ -67,13 +67,13 @@
       <p align="center">
         <img src="./portfolio_images/admin_page1.png" alt="관리자 페이지 1" width="40%">
       </p>
-      <p><b>관리자 페이지 1</b><br>데이터 관리 및 콘텐츠 추가 기능 제공.</p>
+      <p><b>관리자 페이지</b><br>데이터 관리 및 콘텐츠 추가 기능 제공.</p>
     </td>
     <td>
       <p align="center">
         <img src="./portfolio_images/admin_page3.png" alt="관리자 페이지 3" width="40%">
       </p>
-      <p><b>관리자 페이지 3</b><br>효율적인 데이터베이스 관리 화면.</p>
+      <p><b>관리자 페이지</b><br>효율적인 데이터베이스 관리 화면.</p>
     </td>
   </tr>
 </table>

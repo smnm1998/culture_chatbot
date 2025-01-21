@@ -16,11 +16,6 @@
 
 ## 프로젝트 주요 화면
 
-/### 팀 멤버
-/<p align="center">
-/  <img src="./portfolio_images/member.png" alt="팀 멤버" width="30%">
-/</p>
-
 ### 구현 화면
 <table style="width:100%; text-align:center;">
   <tr>

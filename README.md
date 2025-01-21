@@ -1,25 +1,65 @@
 # 대한민국 지역문화 챗봇 시스템
 
-## 프로젝트 소개
-이 프로젝트는 대한민국 각 지역의 문화유산, 역사적 인물, 관광 명소, 전통 정보를 사용자에게 전달하기 위한 챗봇 기반 정보 제공 시스템입니다. 
-주요 목표는 사용자가 간단한 대화형 인터페이스를 통해 다양한 지역문화를 탐색하고, 깊이 있는 정보를 제공받을 수 있도록 하는 것입니다. OpenAI API를 활용하여 자연어 처리 기술을 적용하였으며, 웹과 모바일 사용자 모두에게 최적화된 인터페이스를 제공합니다.
+## 프로젝트 요약
+이 프로젝트는 대한민국 각 지역의 문화유산, 역사적 인물, 관광 명소, 전통 정보를 사용자에게 전달하기 위한 챗봇 기반 정보 제공 시스템입니다.  
+주요 목표는 사용자가 간단한 대화형 인터페이스를 통해 다양한 지역문화를 탐색하고, 깊이 있는 정보를 제공받을 수 있도록 하는 것입니다.  
+**OpenAI API**를 활용하여 자연어 처리 기술을 적용하였으며, 웹과 모바일 사용자 모두에게 최적화된 인터페이스를 제공합니다.
 
-## 주요 화면
-### 1. 메인 페이지 및 주요 콘텐츠
-<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-  <img src="./portfolio_images/main_page.png" alt="메인 페이지" style="width: 22%; height: auto; object-fit: cover;">
-  <img src="./portfolio_images/local_page.png" alt="지역별 페이지" style="width: 22%; height: auto;">
-  <img src="./portfolio_images/independence_page.png" alt="독립운동 페이지" style="width: 22%; height: auto;">
-  <img src="./portfolio_images/sommelier_page.png" alt="소믈리에 페이지" style="width: 22%; height: auto;">
-</div>
-- 메인 페이지에서 추천 콘텐츠를 확인할 수 있으며, 지역별, 독립운동, 소믈리에 페이지를 통해 다양한 주제별 정보를 탐색할 수 있습니다.
+---
 
-### 2. 채팅 페이지
-<div style="display: flex; justify-content: center;">
-  <img src="./portfolio_images/chatting_page.png" alt="채팅 페이지" style="width: 30%; height: auto; object-fit: cover;">
-</div>
-- 사용자와 챗봇 간의 대화 화면으로, 지역문화 관련 질문에 빠르고 정확한 답변을 제공합니다.
+## 프로젝트 배경
+기존의 정보 제공 서비스는 정적 콘텐츠에 머무르는 경우가 많았습니다.  
+이 프로젝트는 대화형 인터페이스를 통해 사용자와 더 가깝게 소통하며, 지역문화를 쉽게 탐색할 수 있도록 돕는 새로운 방식의 정보 시스템을 구축하고자 했습니다.  
+특히 **대한민국의 지역문화**를 기반으로 하여 교육과 오락 요소를 결합한 혁신적인 접근 방식을 채택했습니다.
 
+---
+
+## 프로젝트 주요 화면
+
+### 팀 멤버
+<p align="center">
+  <img src="./portfolio_images/member.png" alt="팀 멤버" width="30%">
+</p>
+
+### 구현 화면
+<table style="width:100%; text-align:center;">
+  <tr>
+    <td>
+      <p align="center">
+        <img src="./portfolio_images/main_page.png" alt="메인 페이지" width="30%">
+      </p>
+      <p><b>메인 페이지</b><br>추천 콘텐츠를 확인하며 원하는 주제를 탐색할 수 있습니다.</p>
+    </td>
+    <td>
+      <p align="center">
+        <img src="./portfolio_images/local_page.png" alt="지역별 페이지" width="30%">
+      </p>
+      <p><b>지역별 페이지</b><br>각 지역의 문화유산과 관광 명소를 확인할 수 있습니다.</p>
+    </td>
+    <td>
+      <p align="center">
+        <img src="./portfolio_images/independence_page.png" alt="독립운동 페이지" width="30%">
+      </p>
+      <p><b>독립운동 페이지</b><br>역사적 인물과 독립운동 관련 정보를 제공합니다.</p>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <p align="center">
+        <img src="./portfolio_images/sommelier_page.png" alt="소믈리에 페이지" width="30%">
+      </p>
+      <p><b>소믈리에 페이지</b><br>전통주와 관련된 다양한 정보를 탐색할 수 있습니다.</p>
+    </td>
+    <td colspan="2">
+      <p align="center">
+        <img src="./portfolio_images/chatting_page.png" alt="채팅 페이지" width="40%">
+      </p>
+      <p><b>채팅 페이지</b><br>챗봇과 대화하며 원하는 정보를 빠르게 얻을 수 있습니다.</p>
+    </td>
+  </tr>
+</table>
+
+---
 ### 3. 관리자 페이지
 <div style="display: flex; justify-content: space-around;">
   <img src="./portfolio_images/admin_page1.png" alt="관리자 페이지 1" style="width: 30%; height: auto;">

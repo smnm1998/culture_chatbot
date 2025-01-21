@@ -50,7 +50,7 @@
       </p>
       <p><b>소믈리에 페이지</b><br>전통주와 관련된 다양한 정보를 탐색할 수 있습니다.</p>
     </td>
-    <td colspan="2">
+    <td>
       <p align="center">
         <img src="./portfolio_images/chatting_page.png" alt="채팅 페이지" width="40%">
       </p>

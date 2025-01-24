@@ -6,7 +6,8 @@ from django.http import StreamingHttpResponse, JsonResponse
 import time
 # import openai
 import os
-
+from rest_framework.exceptions import ValidationError
+from dotenv import load_dotenv
 from typing_extensions import override
 from openai import OpenAI, AssistantEventHandler
 from rest_framework import status
@@ -141,7 +142,7 @@ def chatbot_view(request, id):
     })
 
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 # -------------------------------------------------------------------------------------------------------------------
 # 챗봇 페이지 렌더링
@@ -238,13 +239,17 @@ class EventHandler(AssistantEventHandler):
         clean_text = clean_response(message_content)  # 메타데이터 제거 후 추가
         self.responses.append(clean_text)
 
+# .env 파일 로드 (기존 환경 변수 덮어쓰기 허용)
+load_dotenv(override=True)
 
+# OpenAI API 클라이언트 초기화
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Chatbot API (질문을 받아 OpenAI로 처리)
 class ChatbotAPIView(APIView):
 
     def post(self, request, id):
-        logger.debug(f"Request Data: {request.data}")
+        # logger.debug(f"Request Data: {request.data}")
 
         # assistant_id와 document_id는 DB에서 가져옴
         assistant = get_object_or_404(Assistant, id=id)
@@ -252,8 +257,18 @@ class ChatbotAPIView(APIView):
         document_id = request.data.get('document_id')
         question = request.data.get('question')
 
+        # 파일 유효성 확인--------------------------
+        try:
+            file_info = client.files.retrieve(file_id=document_id)
+            logger.debug(f"File Info: {file_info}")
+        except Exception as e:
+            logger.error(f"Invalid document ID: {document_id}, error: {str(e)}")
+            return Response({"error": f"Invalid document ID: {document_id}"}, status=404)
 
-        # 기존 스레드를 사용하지 않고, 항상 새로운 스레드를 생성
+
+
+
+        # 기존 스레드를 사용하지 않고, 항상 새로운 스레드를 생성-------------------
         try:
             thread = client.beta.threads.create(
                 messages=[
@@ -267,6 +282,7 @@ class ChatbotAPIView(APIView):
                 ],
             )
             thread_id = thread.id  # 새로 생성된 스레드 ID 저장
+            # logger.debug(f"Created Thread ID: {thread_id}")
 
             event_handler = EventHandler()
             with client.beta.threads.runs.stream(

@@ -27,11 +27,11 @@ urlpatterns = [
 
 
     path('lounge/', lounge_view, name='lounge-select'),  # 라운지페이지
-    path('lounge_chatbot/<int:id>/', lounge_chatbot_view, name='chatbot'),
+    path('lounge_chatbot/<int:id>/', lounge_chatbot_view, name='chatbot-lounge'),
 
     path('search/', search_results_view, name='search-results'),  # 검색 결과 페이지
 
-    path('memorium/<int:id>/', memorium_chatbot_view, name='chatbot'),
+    path('memorium/<int:id>/', memorium_chatbot_view, name='chatbot-memorium'),
 
     path('api/assistants/', AssistantListView.as_view(), name='assistant-list'),
     path('api/chatbot/<int:id>/', ChatbotAPIView.as_view(), name='chatbot-api'),  # 새로운 챗봇 API

@@ -16,6 +16,8 @@ from dotenv import load_dotenv
 import logging
 from decouple import config
 
+# .env 파일 로드---------------------------------
+load_dotenv()
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -38,8 +40,7 @@ APPEND_SLASH=False
 #     },
 # }
 
-# .env 파일 로드---------------------------------
-load_dotenv()
+
 
 # OpenAI API 설정
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -55,8 +56,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7u68(1nh*p38_^252xkc*uj9e8jj^$ex6+9p$3gf7m5+6#r-s_'
+
+# SECRET_KEY를 환경 변수에서 읽어오기
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY is not set in the .env file")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

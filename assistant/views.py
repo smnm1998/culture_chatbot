@@ -77,7 +77,7 @@ def independence_view(request):
     return render(request, 'independence.html', {'assistants_by_description': assistants_by_description})
 
 # -------------------------------------------------------------------------------------------------------------------
-# 네 번째 페이지: 독립 선택 페이지
+# 네 번째 페이지: 지역 상인 페이지
 def sommelier_view(request):
     descriptions = ["트랜디한 전통주 와이너리", "막걸리로 즐기는 전통주", "역사가 담긴 한 잔, 안동소주", "파티와 함께하는 이색 전통주"]
     assistants_by_description = {}
@@ -89,7 +89,7 @@ def sommelier_view(request):
     return render(request, 'sommelier.html', {'assistants_by_description': assistants_by_description})
 
 # -------------------------------------------------------------------------------------------------------------------
-# 다섯 번째 페이지: 독립 선택 페이지
+# 다섯 번째 페이지: 라운지 페이지
 def lounge_view(request):
     descriptions = ["Hahoe Village, curved like a lotus flower", "Dosanseowon, a place of Joseon wisdom", "Byeongsan Seowon, like a beautiful folding screen", "Sad love in the moonlight", "Enjoy a fun round of mask dance in Andong"]
     assistants_by_description = {}
@@ -145,7 +145,7 @@ def chatbot_view(request, id):
 
 
 # -------------------------------------------------------------------------------------------------------------------
-# 챗봇 페이지 렌더링
+# 라운지 챗봇 페이지 렌더링
 def lounge_chatbot_view(request, id):
     # 새로운 어시스턴트로 이동할 때 세션에서 스레드 ID 삭제
     request.session.pop('thread_id', None)
@@ -182,7 +182,7 @@ def lounge_chatbot_view(request, id):
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # -------------------------------------------------------------------------------------------------------------------
-# 메모리움 페이지 렌더링
+# 메모리움 챗봇 페이지 렌더링
 def memorium_chatbot_view(request, id):
     # 새로운 어시스턴트로 이동할 때 세션에서 스레드 ID 삭제
     request.session.pop('thread_id', None)
@@ -215,8 +215,6 @@ def memorium_chatbot_view(request, id):
         'welcome_message': assistant.welcome_message
     })
 
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # -------------------------------------------------------------------------------------------------------------------
 # 응답 처리 시 메타데이터 제거
 def clean_response(text):
@@ -239,6 +237,8 @@ class EventHandler(AssistantEventHandler):
         clean_text = clean_response(message_content)  # 메타데이터 제거 후 추가
         self.responses.append(clean_text)
 
+
+#-----------------------------------------------------------------------------------------------------------------------
 # .env 파일 로드 (기존 환경 변수 덮어쓰기 허용)
 load_dotenv(override=True)
 

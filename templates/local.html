@@ -188,7 +188,7 @@
                         $('#assistantList').append('<p>해당 지역에 어시스턴트가 없습니다.</p>');
                     } else {
                         response.forEach(function(assistant) {
-                            console.log(assistant);  // 확인을 위해 추가
+                            // console.log(assistant);  // 어시스턴트의 정보, 문서아이디 등등 관련정보 출력
 
                             // 도시, 도 정보가 존재하는지 확인 후 추가
                             const city_name = assistant.city_county_town ? assistant.city_county_town.name : '정보 없음';
